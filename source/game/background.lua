@@ -29,8 +29,10 @@ function Background:constructor(info)
 	r.fill.scaleX,r.fill.scaleY = 0.2,0.15
 
 
-	r = display.newRect(self.m_group,display.contentWidth/2,display.contentHeight/2,300,300)
-	r:setFillColor(1,0,0) r.alpha = 0.6
+	self.m_timerRectangle = display.newRoundedRect(self.m_group,display.contentWidth/2,display.contentHeight/2,300,300,display.contentWidth/30)
+	self.m_timerRectangle:setFillColor(1,0,0) self.m_timerRectangle.alpha = 0
+	self.m_timerPercent = 81
+	self:tag("enterFrame")
 end 
 
 --//	Delete the object
@@ -42,6 +44,20 @@ end
 function Background:getDisplayObjects() 
 	return { self.m_group }
 end
+
+function Background:onEnterFrame(dt)
+	self.m_time = (self.m_time or 0) + dt 											-- track time.
+	if self.m_timerPercent > 10 then 
+		local timeScalar = self.m_timerPercent / 10 + 1
+		local percent = self.m_timerPercent + math.sin(self.m_time*timeScalar) * 2
+		percent = math.min(100,math.max(0,percent))
+		self.m_timerRectangle.width = display.contentWidth * percent / 100
+		self.m_timerRectangle.height = display.contentHeight * percent / 100
+		self.m_timerRectangle.alpha = 0.6
+	else 
+		self.m_timerRectangle.alpha = 0
+	end
+end 
 
 --- ************************************************************************************************************************************************************************
 --[[

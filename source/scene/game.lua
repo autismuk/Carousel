@@ -33,7 +33,7 @@ end
 function GameScene:preOpen(manager,data,resources)
 	local scene = Framework:new("game.scene")										-- create a new scene
 	scene:new("game.background",{})
-	scene:new("control.leftarrow", { x = 5,y = 96,r = 1, g = 0.5, b = 0, 			-- add a 'give up' button
+	scene:new("control.leftarrow", { x = 5,y = 96,r = 0, g = 0, b = 1,	 			-- add a 'give up' button
 												listener = self, message = "abandon" })
 
 	for i = 1,data.count do
