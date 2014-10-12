@@ -85,5 +85,16 @@ manager:start("game",{ descriptor = descriptor }) 												-- and start.
 --]]
 --- ************************************************************************************************************************************************************************
 
--- the superclass thing for decoration ???? - mixin still needs same ?
--- extended transition system.
+-- TODO: Implement movement (initialise velocity to range)
+-- TODO: Wrap around and bounce
+-- TODO: Implement rotational changes
+-- TODO: Collision manager
+-- TODO: Initial positioning sans collision.
+-- TODO: Collisions and reversability.
+-- TODO: Functions.
+-- TODO: Background and timer
+-- TODO: Generator of puzzles
+-- TODO: Puzzle solution
+-- TODO: Sound effects, particle effects.
+-- TODO: Add match up and completion 
+-- TODO: Add fail.

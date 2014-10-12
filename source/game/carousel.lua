@@ -33,6 +33,7 @@ function Carousel:constructor(info)
 	self:setRadius(self.m_descriptor.radius)										-- set the initial radius to the default value.
 	local r = self.m_descriptor.radius 
 	self:moveTo(math.random(r,1023-r),math.random(r,1535-r)) 						-- position it randomly
+	self.m_group:addEventListener("tap",self) 										-- listen for taps.
 	
 	--self.m_group.width,self.m_group.height = 64,64
 end 
@@ -40,6 +41,7 @@ end
 --//	Delete the object
 
 function Carousel:destructor()
+	self.m_group:removeEventListener("tap",self)									-- remove event listener.
 	self.m_group:removeSelf() self.m_group = nil 									-- tidy up.
 	self.m_descriptor = nil self.m_colourTable = nil self.m_selector = nil
 end 

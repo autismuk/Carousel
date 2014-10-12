@@ -1,43 +1,39 @@
 --- ************************************************************************************************************************************************************************
 ---
----				Name : 		game.lua
----				Purpose :	Main Game Scene
+---				Name : 		background.lua
+---				Purpose :	Game Background
 ---				Updated:	12 October 2014
 ---				Author:		Paul Robson (paul@robsons.org.uk)
 ---				License:	Copyright Paul Robson (c) 2014+
 ---
 --- ************************************************************************************************************************************************************************
 
-require("game.background")
-require("game.carousel")
 
 --- ************************************************************************************************************************************************************************
---																			Create the Scene
+--																			Background Object
 --- ************************************************************************************************************************************************************************
 
-local GameScene = Framework:createClass("scene.game.manager","game.sceneManager")
+local Background = Framework:createClass("game.background")
 
-function GameScene:preOpen(manager,data,resources)
-	local scene = Framework:new("game.scene")
-	scene:new("game.background",{})
-	self.m_objectList = {}
-	math.randomseed(42)
-	for i = 1,12 do
-		local obj = scene:new("game.carousel", { colourDescriptor = "abcdefgh", colourTable = GameScene.colourTable, descriptor = data.descriptor })
-		self.m_objectList[#self.m_objectList+1] = obj
-	end
+--//	Create a Background object,  given the colour descriptor, colour table and level descriptor
+--//	@info 	[table]	constructor information
 
+function Background:constructor(info)
+	self.m_group = display.newGroup() 												-- create a group for the Background object
+	local r = display.newRect(self.m_group,0,0,display.contentWidth,display.contentHeight)
+	r.anchorX,r.anchorY = 0,0 r:setFillColor(0,0.4,1)
+end 
 
-	return scene
+--//	Delete the object
+
+function Background:destructor()
+	self.m_group:removeSelf() self.m_group = nil 									-- tidy up.
+end 
+
+function Background:getDisplayObjects() 
+	return { self.m_group }
 end
 
-function GameScene:postOpen(manager,data,resources)
-	self:setControllableEnabled(true)
-end
-
-GameScene.colourTable = {
-	{ 1,0,0 }, { 0,1,0 }, { 0,0,1 }, { 1,1,0 }, { 1,0,1 }, { 0,1,1 }, { 1,0.5,0 }, { 0,0,0}
-}
 --- ************************************************************************************************************************************************************************
 --[[
 
