@@ -12,6 +12,7 @@ require("game.background")
 require("game.carousel")
 require("utils.buttons")
 require("game.collisions")
+require("game.controller")
 
 --- ************************************************************************************************************************************************************************
 --																			Create the Scene
@@ -34,10 +35,11 @@ function GameScene:preOpen(manager,data,resources)
 	scene:new("game.background",{})
 	scene:new("control.leftarrow", { x = 5,y = 96,r = 1, g = 0.5, b = 0, 			-- add a 'give up' button
 												listener = self, message = "abandon" })
-	for i = 1,4 do
+
+	for i = 1,data.count do
 		local obj = scene:new("game.carousel", { identifier = i,colourDescriptor = "abcdefgh", descriptor = data.descriptor })
 	end
-
+	self.m_usesCollisions = data.descriptor.collidable 								-- save the collision flag
 	local timeEnd = system.getTimer() + 1500 										-- allow at most 1.5 seconds for this bit
 	repeat
 		local list = self.m_collisionChecker:getCollisions(10) 						-- look for collisions, trying to maximise space
@@ -49,7 +51,15 @@ function GameScene:preOpen(manager,data,resources)
 end
 
 function GameScene:postOpen(manager,data,resources)
-	self:setControllableEnabled(true)
+	self.m_gameController = Framework:new("game.controller", { testForCollision = self.m_usesCollisions })
+end
+
+function GameScene:preClose(manager,data,resources)
+	self.m_gameController:delete() self.m_gameController = nil
+end 
+
+function GameScene:onMessage(sender,name,body) 
+	self:performGameEvent("next")
 end
 
 --- ************************************************************************************************************************************************************************

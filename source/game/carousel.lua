@@ -34,11 +34,12 @@ function Carousel:constructor(info)
 	self:setRadius(self.m_descriptor.radius)										-- set the initial radius to the default value.
 	self:randomPosition() 															-- randomly position
 	self.m_group:addEventListener("tap",self) 										-- listen for taps.
-	self.m_velocity = self:randomValue(self.m_descriptor.velocity.min,
-														self.m_descriptor.velocity.max)
+	self.m_velocity = self.m_descriptor.velocity.start or 
+									self:randomValue(self.m_descriptor.velocity.min,self.m_descriptor.velocity.max)
 	self.m_direction = math.random(360)												-- a randomly chosen direction initially.
-	self.m_rotationalVelocity = self:randomValue(self.m_descriptor.rotation.min, 	-- randomly chosen rotational velocity
-														self.m_descriptor.rotation.max)
+
+	self.m_rotationalVelocity = self.m_descriptor.rotation.start or 				-- randomly chosen rotational velocity
+									self:randomValue(self.m_descriptor.rotation.min,self.m_descriptor.rotation.max)
 	self.m_rotationalDirection = 1 													-- forward by default.
 	self:setRotation(math.random(360))												-- initial random rotation.
 
@@ -66,11 +67,29 @@ function Carousel:moveTo(x,y)
 	self.m_x, self.m_y = x,y 														-- save logical positions
 end 
 
+--//	Get the carousel's status record.
+--//	@return 	[table]		table containing required values.
+
+function Carousel:getStatus()
+	return { x = self.m_x, y = self.m_y, radius = self.m_radius, velocity = self.m_velocity, direction = self.m_direction }
+end 
+
+--//	Set the Carousel's motion (velocity and direction)
+--//	@velocity 	[number]	velocity
+--//	@direction 	[number]	direction
+
+function Carousel:setMotion(velocity,direction)
+	local v = self.m_descriptor.velocity
+	self.m_velocity = math.max(v.min,math.min(v.max,velocity))
+	self.m_direction = (direction + 3600) % 360 
+end 
+
 --//	Set the radius in logical units.
 --//	@logicalUnits 	[number]		logical units (1024x1536 scale)
 
 function Carousel:setRadius(logicalUnits)
 	local pUnits = logicalUnits * display.contentWidth / 1024 						-- scale into physical units
+	pUnits = math.max(pUnits,4)
 	self.m_group.xScale = pUnits / 100 												-- calculate the actual scale as the object as drawn is 100 pixels radius.
 	self.m_group.yScale = self.m_group.xScale 										-- set both scales the same - it's a circle.
 	self.m_radius = logicalUnits 													-- save the radius
@@ -80,7 +99,7 @@ end
 --//	@rotation 	[number]	rotation
 
 function Carousel:setRotation(rotation)
-	self.m_group.rotation = rotation * self.m_rotationalDirection					-- set the rotation
+	self.m_group.rotation = rotation 												-- set the rotation
 	self.m_rotation = (rotation + 36000) % 360 										-- record it, but force into range 0-360.
 end 
 
@@ -94,6 +113,12 @@ function Carousel:onEnterFrame(dt)
 	if self.m_isSelected then 														-- is it selected.
 		self.m_selector.alpha = math.abs(math.sin(self.m_time*2.5))					-- then flash it on and off
 	end 
+
+	local v = self.m_descriptor.velocity 											-- access velocity structure.
+	if v.acc ~= 0 then 																-- is there acceleration supplied ?
+		self.m_velocity = self.m_velocity + v.acc * dt 								-- v = u + at 
+		self.m_velocity = math.min(v.max,math.max(v.min,self.m_velocity))			-- force into range.
+	end
 	
 	if self.m_velocity ~= 0 then 													-- is it moving ?
 																					-- work out new position
@@ -101,11 +126,6 @@ function Carousel:onEnterFrame(dt)
 		local y = self.m_y - self.m_velocity * math.sin(math.rad(self.m_direction)) * dt
 		self:moveTo(x,y)
 
-		local v = self.m_descriptor.velocity 										-- access velocity structure.
-		if v.acc ~= 0 then 															-- is there acceleration supplied ?
-			self.m_velocity = self.m_velocity + v.acc * dt 							-- v = u + at 
-			self.m_velocity = math.min(v.max,math.max(v.min,self.m_velocity))		-- force into range.
-		end
 		local r = self.m_radius 													-- short for radius
 		if self.m_descriptor.wrappable then 										-- is it wrapping round, or bouncing ?
 			if self.m_x > 1024 + r then self:moveTo(self.m_x - 1024 - r * 2,self.m_y) end
@@ -133,7 +153,8 @@ function Carousel:onEnterFrame(dt)
 	end
 	
 	if self.m_rotationalVelocity ~= 0 then 											-- rotating 
-		local newR = self.m_rotationalVelocity * dt + self.m_rotation 				-- work out new rotation
+		local newR = self.m_rotationalVelocity * dt * self.m_rotationalDirection + 	-- work out new rotation
+																			self.m_rotation 				
 		self:setRotation(newR) 														-- set it, direction done by this method.
 		local r = self.m_descriptor.rotation 										-- access rotation structure
 		if r.acc ~= 0 then 															-- rotational acceleration
@@ -141,7 +162,41 @@ function Carousel:onEnterFrame(dt)
 			self.m_rotationalVelocity = math.min(r.max,math.max(r.min,self.m_rotationalVelocity))
 		end
 	end
+
+	if self.m_descriptor.radiusFunction ~= nil then 								-- radius function provided ?
+		local v = self.m_descriptor.radiusFunction(self.m_time,self.m_identifier) 	-- call it
+		v = math.max(0,math.min(v,1))												-- force in range 0-1
+		self:setRadius(v * self.m_descriptor.radius)								-- and set the radius accordingly.
+	end
+
+	if self.m_descriptor.alphaFunction ~= nil then 									-- alpha function provided ?
+		local v = self.m_descriptor.alphaFunction(self.m_time,self.m_identifier) 	-- call it
+		v = math.max(0,math.min(v,1))												-- force in range 0-1
+		self.m_group.alpha = v	 													-- and set the alpha accordingly.
+	end
+
 end 
+
+--//	Handle collisions.
+
+function Carousel:collision()
+	if self.m_descriptor.reversable then 											-- do we reverse on collision
+		self.m_rotationalDirection = -self.m_rotationalDirection 					-- if so, do it.
+	end 
+	self.m_velocity = self:adjust(self.m_velocity,self.m_descriptor.velocity)
+	self.m_rotationalVelocity = self:adjust(self.m_rotationalVelocity,self.m_descriptor.rotation)
+end 
+
+--//	A collision has occurred - given a value (with min, max, and collision) adjust it appropriately.
+--//	@value 	[number]	value to adjust
+--//	@modifier [table]	table containing min, max and collision percentage
+--//	@return [number]	new value
+
+function Carousel:adjust(value,modifier)
+	value = value * modifier.collide / 100 											-- calculate new value
+	value = math.max(modifier.min,math.min(modifier.max,value))						-- force into min/max range
+	return value 
+end
 
 --//	Check to see if the carousel object is active - not been matched up.
 --//	@return 	[true]			true if object is active.
@@ -180,7 +235,7 @@ function Carousel:createCarousel()
 		poly.rotation = (segment - 1) * segAngle 									-- rotate into position
 	end
 	local frame = display.newCircle(g,0,0,100) frame:setFillColor(0,0,0,0) 			-- this is the brown frame.
-	frame.strokeWidth = 10 frame:setStrokeColor(160/255,69/255,13/255)
+	frame.strokeWidth = 12 frame:setStrokeColor(160/255,69/255,13/255)
 	local r1 = display.newCircle(g,0,0,100-frame.strokeWidth/2) r1:setFillColor(0,0,0,0)
 	r1.strokeWidth = 3 r1:setStrokeColor(0,0,0)										-- black lines framing the brown frame.
 	r1 = display.newCircle(g,0,0,100+frame.strokeWidth/2) r1:setFillColor(0,0,0,0)
@@ -204,9 +259,9 @@ function Carousel:applyDefaults()
 	d.velocity = d.velocity or {}													-- velocity/rotation info are tables
 	d.rotation = d.rotation or {}
 	d = self.m_descriptor.velocity 													-- initialise the tables 
-	d.min = d.min or 0 d.max = d.max or 0 d.acc = d.acc or 0 d.collide = d.collide or 0
+	d.min = d.min or 0 d.max = d.max or 0 d.acc = d.acc or 0 d.collide = d.collide or 100
 	d = self.m_descriptor.rotation
-	d.min = d.min or 0 d.max = d.max or 0 d.acc = d.acc or 0 d.collide = d.collide or 0
+	d.min = d.min or 0 d.max = d.max or 0 d.acc = d.acc or 0 d.collide = d.collide or 100
 end 
 
 --//	Reliable version of math.random - works for any range of numbers, including non integers

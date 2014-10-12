@@ -11,11 +11,17 @@
 --- ************************************************************************************************************************************************************************
 --																	Collisions Manager Object
 --- ************************************************************************************************************************************************************************
+--										 	THIS ACCESSES CAROUSEL MEMBERS DIRECTLY FOR SPEED (m_x,m_y,m_radius)
+--- ************************************************************************************************************************************************************************
 
 local CollisionManager = Framework:createClass("game.collision.checker")
 
 function CollisionManager:constructor(info) end 
 function CollisionManager:destructor() end
+
+--//	Get all the colliding carousel objects
+--//	@gap 	[number]	Minimum gap between them, besides the radii (defaults to 0)
+--//	@return [array]		Array of reference pairs indicating collisions.
 
 function CollisionManager:getCollisions(gap)
 	gap = gap or 0 																	-- default gap value

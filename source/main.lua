@@ -30,6 +30,7 @@ require("utils.simplescene")																	-- simple scenes.
 local fm = require("utils.fontmanager")															-- bitmap font manager
 require("utils.stubscene")																		-- stub scenes for development.
 require("scene.game")																			-- main game scene
+require("game.carousel")																		-- carousel object
 
 --- ************************************************************************************************************************************************************************
 --																				Start Up
@@ -50,8 +51,7 @@ manager:addManagedState("title",
 								r.anchorX,r.anchorY = 0,0 r.alpha = 1 r:setFillColor(0,0,0.5)
 								local ver = display.newText(group,"v"..ApplicationDescription.version,0,0,system.nativeFont,10)
 								ver.anchorX,ver.anchorY = 0,0 ver:setFillColor(0,1,0)
-
-								storage.t1 = display.newBitmapText(group,"Carousel",display.contentWidth/2,display.contentHeight * 0.2,"jandles",display.contentWidth/3):setTintColor(1,1,0)
+								storage.t1 = display.newBitmapText(group,"Carousel",display.contentWidth/2,display.contentHeight * 0.2,"jandles",display.contentWidth*0.4):setTintColor(1,1,0)
 								storage.t2 = display.newBitmapText(group,"A Matching Puzzle Game",display.contentWidth/2,display.contentHeight * 0.55,"jandles",display.contentWidth/7):setTintColor(1,0.5,0)
 								storage.t3 = display.newBitmapText(group,"Written by Paul Robson (C) 2014",display.contentWidth/2,display.contentHeight * 0.9,"jandles",display.contentWidth/10):setTintColor(0,1,1)
 								storage.t1:setModifier(fm.Modifiers.SimpleCurveModifier:new(0,180,0.3,3)):animate(3)
@@ -74,10 +74,14 @@ manager:addManagedState("game",																	-- game scene
 						{ next = "level" })
 
 local descriptor = {}																			-- default empty descriptor.
-descriptor.rotation = { min = 20,max = 60, acc = 0 }
-descriptor.velocity = { min = 100,max = 174 }
+descriptor.rotation = { start = 120, min = 120,max = 360, acc = 0 }
+descriptor.velocity = { start = 100,min = 100,max = 974, collide = 200 }
 descriptor.wrappable = false
-manager:start("game",{ descriptor = descriptor }) 												-- and start.
+descriptor.collidable = true
+descriptor.reversable = true
+
+
+manager:start("game",{ descriptor = descriptor, count = 16 }) 									-- and start.
 
 --- ************************************************************************************************************************************************************************
 --[[
@@ -89,12 +93,9 @@ manager:start("game",{ descriptor = descriptor }) 												-- and start.
 --]]
 --- ************************************************************************************************************************************************************************
 
--- TODO: Collisions and reversability and acceleration after collisions.
--- TODO: Functions.
 -- TODO: Background and timer
 -- TODO: Generator of puzzles
 -- TODO: Puzzle solution
 -- TODO: Sound effects, particle effects.
 -- TODO: Add match up and completion 
--- TODO: Add fail.
 -- TODO: When object is killed, untag it as carousel.
