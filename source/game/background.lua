@@ -21,7 +21,16 @@ local Background = Framework:createClass("game.background")
 function Background:constructor(info)
 	self.m_group = display.newGroup() 												-- create a group for the Background object
 	local r = display.newRect(self.m_group,0,0,display.contentWidth,display.contentHeight)
-	r.anchorX,r.anchorY = 0,0 r:setFillColor(0,0.4,1)
+	r.anchorX,r.anchorY = 0,0 
+	r.anchorX,r.anchorY = 0,0 												-- tile it.
+	display.setDefault("textureWrapX","repeat")
+	display.setDefault("textureWrapY","repeat")
+	r.fill = { type = "image", filename = "images/tile.jpg" }
+	r.fill.scaleX,r.fill.scaleY = 0.2,0.15
+
+
+	r = display.newRect(self.m_group,display.contentWidth/2,display.contentHeight/2,300,300)
+	r:setFillColor(1,0,0) r.alpha = 0.6
 end 
 
 --//	Delete the object

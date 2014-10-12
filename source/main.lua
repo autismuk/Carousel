@@ -75,7 +75,7 @@ manager:addManagedState("game",																	-- game scene
 
 local descriptor = {}																			-- default empty descriptor.
 descriptor.rotation = { start = 120, min = 120,max = 360, acc = 0 }
-descriptor.velocity = { start = 100,min = 100,max = 974, collide = 200 }
+descriptor.velocity = { start = 100,min = 100,max = 1974, collide = 200 }
 descriptor.wrappable = false
 descriptor.collidable = true
 descriptor.reversable = true

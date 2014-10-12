@@ -89,7 +89,7 @@ end
 
 function Carousel:setRadius(logicalUnits)
 	local pUnits = logicalUnits * display.contentWidth / 1024 						-- scale into physical units
-	pUnits = math.max(pUnits,4)
+	pUnits = math.max(pUnits,4)														-- never goes completely.
 	self.m_group.xScale = pUnits / 100 												-- calculate the actual scale as the object as drawn is 100 pixels radius.
 	self.m_group.yScale = self.m_group.xScale 										-- set both scales the same - it's a circle.
 	self.m_radius = logicalUnits 													-- save the radius
@@ -245,7 +245,7 @@ function Carousel:createCarousel()
 	self.m_selector:setStrokeColor(1,1,0) 
 	self.m_selector.alpha = 0 														-- which initially you can't see
 
-	display.newText(self.m_group,"#"..self.m_identifier,0,0,native.systemFont,48)
+	-- display.newText(self.m_group,"#"..self.m_identifier,0,0,native.systemFont,48)
 end 
 
 --//	Apply the object defaults - these are defined in the documentation.
