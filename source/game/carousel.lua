@@ -20,8 +20,9 @@ local Carousel,SuperClass = Framework:createClass("game.carousel","system.contro
 --//	@info 	[table]	constructor information
 
 function Carousel:constructor(info)
+	self.m_identifier = info.identifier 											-- save the unique identifier number.
 	self.m_colourDescriptor = info.colourDescriptor 								-- save the physical descriptor
-	self.m_colourTable = info.colourTable 											-- save reference to the colour table
+	self.m_colourTable = info.colourTable or Carousel.colourTable					-- save reference to the colour table, using default here if needed.
 	self.m_descriptor = info.descriptor 											-- save the descriptor
 	self:applyDefaults() 															-- apply the default values.
 	self.m_group = display.newGroup() 												-- create a group for the carousel object
@@ -31,11 +32,16 @@ function Carousel:constructor(info)
 	self.m_isSelected = false 														-- initially not selected
 	self.m_isKilled = false 														-- has not been killed (used when disappearing but object exists)
 	self:setRadius(self.m_descriptor.radius)										-- set the initial radius to the default value.
-	local r = self.m_descriptor.radius 
-	self:moveTo(math.random(r,1023-r),math.random(r,1535-r)) 						-- position it randomly
+	self:randomPosition() 															-- randomly position
 	self.m_group:addEventListener("tap",self) 										-- listen for taps.
-	
-	--self.m_group.width,self.m_group.height = 64,64
+	self.m_velocity = self:randomValue(self.m_descriptor.velocity.min,
+														self.m_descriptor.velocity.max)
+	self.m_direction = math.random(360)												-- a randomly chosen direction initially.
+	self.m_rotationalVelocity = self:randomValue(self.m_descriptor.rotation.min, 	-- randomly chosen rotational velocity
+														self.m_descriptor.rotation.max)
+	self.m_rotationalDirection = 1 													-- forward by default.
+	self:setRotation(math.random(360))												-- initial random rotation.
+
 end 
 
 --//	Delete the object
@@ -67,6 +73,15 @@ function Carousel:setRadius(logicalUnits)
 	local pUnits = logicalUnits * display.contentWidth / 1024 						-- scale into physical units
 	self.m_group.xScale = pUnits / 100 												-- calculate the actual scale as the object as drawn is 100 pixels radius.
 	self.m_group.yScale = self.m_group.xScale 										-- set both scales the same - it's a circle.
+	self.m_radius = logicalUnits 													-- save the radius
+end 
+
+--//	Set the rotation in degrees
+--//	@rotation 	[number]	rotation
+
+function Carousel:setRotation(rotation)
+	self.m_group.rotation = rotation * self.m_rotationalDirection					-- set the rotation
+	self.m_rotation = (rotation + 36000) % 360 										-- record it, but force into range 0-360.
 end 
 
 --//	Handle the enter frame event
@@ -79,9 +94,69 @@ function Carousel:onEnterFrame(dt)
 	if self.m_isSelected then 														-- is it selected.
 		self.m_selector.alpha = math.abs(math.sin(self.m_time*2.5))					-- then flash it on and off
 	end 
+	
+	if self.m_velocity ~= 0 then 													-- is it moving ?
+																					-- work out new position
+		local x = self.m_x + self.m_velocity * math.cos(math.rad(self.m_direction)) * dt 
+		local y = self.m_y - self.m_velocity * math.sin(math.rad(self.m_direction)) * dt
+		self:moveTo(x,y)
 
-	self.m_group.rotation = self.m_time * 100
+		local v = self.m_descriptor.velocity 										-- access velocity structure.
+		if v.acc ~= 0 then 															-- is there acceleration supplied ?
+			self.m_velocity = self.m_velocity + v.acc * dt 							-- v = u + at 
+			self.m_velocity = math.min(v.max,math.max(v.min,self.m_velocity))		-- force into range.
+		end
+		local r = self.m_radius 													-- short for radius
+		if self.m_descriptor.wrappable then 										-- is it wrapping round, or bouncing ?
+			if self.m_x > 1024 + r then self:moveTo(self.m_x - 1024 - r * 2,self.m_y) end
+			if self.m_y > 1536 + r then self:moveTo(self.m_x,self.m_y - 1536 - r * 2) end
+			if self.m_x < -r then self:moveTo(self.m_x + 1024 + r * 2,self.m_y) end
+			if self.m_y < -r then self:moveTo(self.m_x,self.m_y + 1536 + r * 2) end
+		else  																		-- bounces
+			if self.m_x < r or self.m_x > 1024 - r then 							-- left/right walls.
+				if self.m_direction > 90 and self.m_direction < 270 then 			-- if moving left to right.
+					self.m_direction = (540 - self.m_direction) % 360 				-- now it will be 270..90
+				end 
+				if self.m_x > r then 
+					self.m_direction = (540 - self.m_direction) % 360 				-- equivalent to bouncing off l/r wall.
+				end
+			end 
+			if self.m_y < r or self.m_y > 1536 -r then 								-- top/bottom walls.
+				if self.m_direction > 180 then 										-- force into range 0..180
+					self.m_direction = 360-self.m_direction
+				end
+				if self.m_y < r then 
+					self.m_direction = 360-self.m_direction 
+				end
+			end
+		end
+	end
+	
+	if self.m_rotationalVelocity ~= 0 then 											-- rotating 
+		local newR = self.m_rotationalVelocity * dt + self.m_rotation 				-- work out new rotation
+		self:setRotation(newR) 														-- set it, direction done by this method.
+		local r = self.m_descriptor.rotation 										-- access rotation structure
+		if r.acc ~= 0 then 															-- rotational acceleration
+			self.m_rotationalVelocity = self.m_rotationalVelocity + r.acc * dt 		-- update with rotational acceleration and force into range
+			self.m_rotationalVelocity = math.min(r.max,math.max(r.min,self.m_rotationalVelocity))
+		end
+	end
+end 
 
+--//	Check to see if the carousel object is active - not been matched up.
+--//	@return 	[true]			true if object is active.
+
+function Carousel:isInPlay()
+	return self:isAlive() and (not self.m_isKilled) 
+end 
+
+--//	Randomly position the carousel, making sure that the back arrow is visible.
+
+function Carousel:randomPosition()
+	local r = self.m_descriptor.radius 
+	repeat 
+		self:moveTo(math.random(r,1023-r),math.random(r,1535-r)) 					-- position it randomly
+	until self.m_x > 100+r or self.m_y < 1440-r 									-- make sure the back arrow is visible, in case nothing moves.
 end 
 
 --//	Create the actual physical carousel object.
@@ -114,6 +189,8 @@ function Carousel:createCarousel()
 	self.m_selector:setFillColor(0,0,0,0) self.m_selector.strokeWidth = 14
 	self.m_selector:setStrokeColor(1,1,0) 
 	self.m_selector.alpha = 0 														-- which initially you can't see
+
+	display.newText(self.m_group,"#"..self.m_identifier,0,0,native.systemFont,48)
 end 
 
 --//	Apply the object defaults - these are defined in the documentation.
@@ -131,6 +208,21 @@ function Carousel:applyDefaults()
 	d = self.m_descriptor.rotation
 	d.min = d.min or 0 d.max = d.max or 0 d.acc = d.acc or 0 d.collide = d.collide or 0
 end 
+
+--//	Reliable version of math.random - works for any range of numbers, including non integers
+--//	@min 	[number]		lowest value 
+--//	@max 	[number]		highest value 
+
+function Carousel:randomValue(min,max)
+	if min == max then return min end 												-- if the same, there is no difference.
+	return min + math.random() * (max - min) 										-- otherwise a random value between them.
+end 
+
+--//	Default colour table
+
+Carousel.colourTable = {
+	{ 1,0,0 }, { 0,1,0 }, { 0,0,1 }, { 1,1,0 }, { 1,0,1 }, { 0,1,1 }, { 1,0.5,0 }, { 0,0,0}
+}
 
 --- ************************************************************************************************************************************************************************
 --[[

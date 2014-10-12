@@ -35,6 +35,8 @@ require("scene.game")																			-- main game scene
 --																				Start Up
 --- ************************************************************************************************************************************************************************
 
+math.randomseed( 42 )
+
 Framework:new("audio.sound",																	-- create sounds object, not much in this game.
 					{ sounds = { "correct","wrong" } })
 
@@ -72,7 +74,9 @@ manager:addManagedState("game",																	-- game scene
 						{ next = "level" })
 
 local descriptor = {}																			-- default empty descriptor.
-descriptor.test = 42
+descriptor.rotation = { min = 20,max = 60, acc = 0 }
+descriptor.velocity = { min = 100,max = 174 }
+descriptor.wrappable = false
 manager:start("game",{ descriptor = descriptor }) 												-- and start.
 
 --- ************************************************************************************************************************************************************************
@@ -85,12 +89,7 @@ manager:start("game",{ descriptor = descriptor }) 												-- and start.
 --]]
 --- ************************************************************************************************************************************************************************
 
--- TODO: Implement movement (initialise velocity to range)
--- TODO: Wrap around and bounce
--- TODO: Implement rotational changes
--- TODO: Collision manager
--- TODO: Initial positioning sans collision.
--- TODO: Collisions and reversability.
+-- TODO: Collisions and reversability and acceleration after collisions.
 -- TODO: Functions.
 -- TODO: Background and timer
 -- TODO: Generator of puzzles
@@ -98,3 +97,4 @@ manager:start("game",{ descriptor = descriptor }) 												-- and start.
 -- TODO: Sound effects, particle effects.
 -- TODO: Add match up and completion 
 -- TODO: Add fail.
+-- TODO: When object is killed, untag it as carousel.
