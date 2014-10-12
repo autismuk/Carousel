@@ -14,19 +14,26 @@
 
 local Controller = Framework:createClass("game.controller")
 
-Controller.CHECK_RATE = 20
+Controller.CHECK_RATE = 20 															-- how many times a second do we do collision checks.
+
+--//	Create a game controller
+--//	@info 	[table]	constructor information
 
 function Controller:constructor(info) 
-	self:setControllableEnabled(true)
-	self:tag("enterFrame")
-	self.m_collisionTest = info.testForCollision
-	self.m_collisionChecker = Framework:new("game.collision.checker")
+	self:tag("enterFrame,gamecontroller")											-- handle enterFrame and self identify
+	self.m_collisionTest = info.testForCollision 									-- remember if we do collisions on this level.
+	self.m_collisionChecker = Framework:new("game.collision.checker") 				-- helper for collision checking
 end 
 
+--//	Delete a game controller.
+
 function Controller:destructor() 	
-	self:setControllableEnabled(false)
-	self.m_collisionChecker:delete() self.m_collisionChecker = nil
+	self:setControllableEnabled(false)												-- stop everything
+	self.m_collisionChecker:delete() self.m_collisionChecker = nil 					-- delete the checker helper.
 end
+
+--//	Handle enterFrame
+--//	@dt 	[number]	elapsed time
 
 function Controller:onEnterFrame(dt)
 	self.m_timer = (self.m_timer or 0) + dt 										-- track time.
@@ -39,13 +46,25 @@ function Controller:onEnterFrame(dt)
 	end
 end
 
+--//	Handle messages
+--//	@sender 	[object]	who sent it
+--//	@name 		[string]	message (select, win, lose)
+--//	@body 		[table]		other data
+
+function Controller:onMessage(sender,name,body)
+	print(name,body.object)
+end 
+
+--//	Handle collision between two objects
+--//	@obj1 	[object]		first object
+--//	@obj2 	[object] 		second object
+
 function Controller:handleCollision(obj1,obj2)
-	--self:setControllableEnabled(false)
 	local s1,s2 = obj1:getStatus(), obj2:getStatus() 								-- get object statuses.
 	local angle = math.deg(math.atan2(s2.y-s1.y,s1.x-s2.x))							-- angle from 2 to 1.
 	local velocity = (s1.velocity + s2.velocity) / 2 								-- distribute velocity equally
 	obj1:setMotion(velocity,(angle+3600) % 360)										-- send off in opposite directions
-	obj1:collision()
+	obj1:collision() 																-- and tell both they've collided.
 	obj2:setMotion(velocity,(angle+3600+180) % 360)	
 	obj2:collision()
 end

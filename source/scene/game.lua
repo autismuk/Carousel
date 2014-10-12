@@ -14,6 +14,9 @@ require("utils.buttons")
 require("game.collisions")
 require("game.controller")
 require("utils.music")
+require("utils.text")
+require("game.factory")
+
 --- ************************************************************************************************************************************************************************
 --																			Create the Scene
 --- ************************************************************************************************************************************************************************
@@ -34,12 +37,22 @@ function GameScene:preOpen(manager,data,resources)
 	local scene = Framework:new("game.scene")										-- create a new scene
 	scene:new("game.background",{})
 	scene:new("audio.music") 														-- start the background music.
-	scene:new("control.leftarrow", { x = 5,y = 96,r = 0, g = 0, b = 1,	 			-- add a 'give up' button
-												listener = self, message = "abandon" })
+	scene:new("control.leftarrow", { x = 5,y = 96,									-- add a 'give up' button
+									 r = 139/255, g = 69/255, b = 19/255,	 		
+									 listener = self, message = "abandon" })
 
-	for i = 1,data.count do
-		local obj = scene:new("game.carousel", { identifier = i,colourDescriptor = "abcdefgh", descriptor = data.descriptor })
+	assert(data.count % 2 == 0,"Must be an even number of carousel objects !") 		-- they are paired off.
+
+	local factory = Framework:new("game.segment.factory",							-- create a factory.
+												{ size = data.segments, colours = 8 })	
+	for i = 1,data.count / 2 do 													-- n/2 pairs
+		local sequence = factory:create() 											-- get the new sequence.
+		for j = 1,2 do 																-- create two of them.
+			scene:new("game.carousel", { identifier = i,colourDescriptor = sequence, descriptor = data.descriptor })
+		end
 	end
+	factory:delete() 																-- no longer need the factory
+
 	self.m_usesCollisions = data.descriptor.collidable 								-- save the collision flag
 	local timeEnd = system.getTimer() + 1500 										-- allow at most 1.5 seconds for this bit
 	repeat
@@ -48,15 +61,30 @@ function GameScene:preOpen(manager,data,resources)
 			for _,pair in ipairs(list) do pair[math.random(1,2)]:randomPosition() end 
 		end
 	until #list == 0 or system.getTimer() > timeEnd 								-- until either no collisions, or time up.
+
+	scene:new("control.text", { text = "Match Up!", font = "jandles", alpha = 1, 	-- add the 'get ready' text
+								tint = { r = 0,g = 1,b = 1} ,
+								fontSize = display.contentWidth / 20,
+								transition = { time = 1500, alpha = 1 ,
+									onComplete = function(item) 					-- transition it visible
+									timer.performWithDelay(1000,function() 			-- hold it briefly.
+											self:setControllableEnabled(true) 		-- everything on
+											transition.to(item, { time = 750, y = -80, 
+																  alpha = 0.1, 
+																  onComplete = function() item:removeSelf() end })
+											end)
+									 end }
+	})		
 	return scene
 end
 
 function GameScene:postOpen(manager,data,resources)
-	self.m_gameController = Framework:new("game.controller", { testForCollision = self.m_usesCollisions })
+	self.m_gameController = Framework:new("game.controller", 						-- start the game controller
+									{ testForCollision = self.m_usesCollisions })
 end
 
 function GameScene:preClose(manager,data,resources)
-	self.m_gameController:delete() self.m_gameController = nil
+	self.m_gameController:delete() self.m_gameController = nil 						-- remove the game controller.
 end 
 
 function GameScene:onMessage(sender,name,body) 

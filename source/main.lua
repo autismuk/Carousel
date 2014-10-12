@@ -75,13 +75,13 @@ manager:addManagedState("game",																	-- game scene
 
 local descriptor = {}																			-- default empty descriptor.
 descriptor.rotation = { start = 120, min = 120,max = 360, acc = 0 }
-descriptor.velocity = { start = 100,min = 100,max = 1974, collide = 200 }
+descriptor.velocity = { start = 100,min = 100,max = 1974, collide = 105 }
 descriptor.wrappable = false
 descriptor.collidable = true
 descriptor.reversable = true
 
 
-manager:start("game",{ descriptor = descriptor, count = 16 }) 									-- and start.
+manager:start("game",{ descriptor = descriptor, count = 6, segments = 4 }) 						-- and start.
 
 --- ************************************************************************************************************************************************************************
 --[[
@@ -93,9 +93,8 @@ manager:start("game",{ descriptor = descriptor, count = 16 }) 									-- and st
 --]]
 --- ************************************************************************************************************************************************************************
 
+-- TODO: Handling of select/deselect/pairing code.
+-- TODO: Sound effects
 -- TODO: Background and timer
--- TODO: Generator of puzzles
--- TODO: Puzzle solution
--- TODO: Sound effects, particle effects.
--- TODO: Add match up and completion 
--- TODO: When object is killed, untag it as carousel.
+-- TODO: Add completion succeed/fail
+-- TODO: think about how the swipe-level thing will work ? swipeable group ?

@@ -9,6 +9,7 @@
 --- ************************************************************************************************************************************************************************
 
 require("utils.controllable")
+require("utils.particle")
 
 --- ************************************************************************************************************************************************************************
 --																			Carousel Object
@@ -101,6 +102,47 @@ end
 function Carousel:setRotation(rotation)
 	self.m_group.rotation = rotation 												-- set the rotation
 	self.m_rotation = (rotation + 36000) % 360 										-- record it, but force into range 0-360.
+end 
+
+--//	Does this carousel object match another ?
+--//	@carousel [object]		carousel object
+--//	@return 	[boolean]	true if they match i.e. they are the same colour sequence.
+
+function Carousel:matches(carousel)
+	return self.m_colourDescriptor == carousel.m_colourDescriptor 
+end 
+
+--//	Handle Carousel taps
+--//	@e 	[event]		event data
+
+function Carousel:tap(e)
+	if self:isInPlay() then 														-- if game actually ongoing.
+		self:sendMessage("gameController","select", { object = self })				-- send a 'select' message to the game controller.
+	end
+end 
+
+--//	Select/Deselect an object
+--//	@select [boolean]	selection state
+
+function Carousel:setSelected(select)
+	self.m_isSelected = select 														-- copy the select value
+	if not select then self.m_selector.alpha = 0 end 								-- if not selected, then hide it.
+end
+
+--//	Kill a Carousel object
+
+function Carousel:kill()
+	if self.m_isKilled then return end 												-- already killed.
+	self:setSelected(false) 														-- deselect it if it is selected.
+	self.m_isKilled = true 															-- mark as killed
+	self:tag("-carousel,-enterFrame")												-- neither moving, nor colliding, just going through the motions.
+	transition.to(self.m_group, { time = 500,										-- make it twizzle away and disapppear
+								  rotation = self.m_group.rotation + 360*5 ,
+								  xScale = 0.1, yScale = 0.1, alpha = 0.01,
+								  onComplete = function(object) 
+								  	Framework:new("graphics.particle.short", { x = self.m_group.x,y = self.m_group.y, time = 1, emitter = "StarExplosion"})
+								  	self:delete()									-- and self destruct.
+								  end })
 end 
 
 --//	Handle the enter frame event

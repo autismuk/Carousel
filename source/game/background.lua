@@ -31,7 +31,7 @@ function Background:constructor(info)
 
 	self.m_timerRectangle = display.newRoundedRect(self.m_group,display.contentWidth/2,display.contentHeight/2,300,300,display.contentWidth/30)
 	self.m_timerRectangle:setFillColor(1,0,0) self.m_timerRectangle.alpha = 0
-	self.m_timerPercent = 81
+	self.m_timerPercent = 1
 	self:tag("enterFrame")
 end 
 
@@ -49,7 +49,7 @@ function Background:onEnterFrame(dt)
 	self.m_time = (self.m_time or 0) + dt 											-- track time.
 	if self.m_timerPercent > 10 then 
 		local timeScalar = self.m_timerPercent / 10 + 1
-		local percent = self.m_timerPercent + math.sin(self.m_time*timeScalar) * 2
+		local percent = self.m_timerPercent + math.sin(self.m_time*timeScalar) * 3 / 2
 		percent = math.min(100,math.max(0,percent))
 		self.m_timerRectangle.width = display.contentWidth * percent / 100
 		self.m_timerRectangle.height = display.contentHeight * percent / 100
