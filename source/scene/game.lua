@@ -13,7 +13,7 @@ require("game.carousel")
 require("utils.buttons")
 require("game.collisions")
 require("game.controller")
-
+require("utils.music")
 --- ************************************************************************************************************************************************************************
 --																			Create the Scene
 --- ************************************************************************************************************************************************************************
@@ -33,6 +33,7 @@ end
 function GameScene:preOpen(manager,data,resources)
 	local scene = Framework:new("game.scene")										-- create a new scene
 	scene:new("game.background",{})
+	scene:new("audio.music") 														-- start the background music.
 	scene:new("control.leftarrow", { x = 5,y = 96,r = 0, g = 0, b = 1,	 			-- add a 'give up' button
 												listener = self, message = "abandon" })
 
