@@ -16,12 +16,15 @@ require("game.controller")
 require("utils.music")
 require("utils.text")
 require("game.factory")
+require("game.leveldescriptor")
 
 --- ************************************************************************************************************************************************************************
 --																			Create the Scene
 --- ************************************************************************************************************************************************************************
 
 local GameScene,SuperClass = Framework:createClass("scene.game.manager","game.sceneManager")
+
+GameScene.levelDescriptor = Framework:new("game.levelDescriptor")					-- all instances share a level descriptor.
 
 function GameScene:constructor(info)
 	SuperClass.constructor(self,info)
@@ -35,25 +38,27 @@ end
 
 function GameScene:preOpen(manager,data,resources)
 	local scene = Framework:new("game.scene")										-- create a new scene
-	scene:new("game.background",{ time = data.time or 60 })
+	local setup = GameScene.levelDescriptor:get(data.level) 						-- get information pertaining to this.
+	Framework.fw.levelManager:setLevel(data.level) 									-- let level tracking manager know which level.
+	scene:new("game.background",{ time = setup.time or 60 }) 						-- create background with timer
 	scene:new("audio.music") 														-- start the background music.
 	scene:new("control.leftarrow", { x = 5,y = 96,									-- add a 'give up' button
 									 r = 139/255, g = 69/255, b = 19/255,	 		
 									 listener = self, message = "abandon" })
 
-	assert(data.count % 2 == 0,"Must be an even number of carousel objects !") 		-- they are paired off.
+	assert(setup.count % 2 == 0,"Must be an even number of carousel objects !") 	-- they are paired off.
 
 	local factory = Framework:new("game.segment.factory",							-- create a factory.
-												{ size = data.segments, colours = 8 })	
-	for i = 1,data.count / 2 do 													-- n/2 pairs
+												{ size = setup.segments, colours = 8 })	
+	for i = 1,setup.count / 2 do 													-- n/2 pairs
 		local sequence = factory:create() 											-- get the new sequence.
 		for j = 1,2 do 																-- create two of them.
-			scene:new("game.carousel", { identifier = i,colourDescriptor = sequence, descriptor = data.descriptor })
+			scene:new("game.carousel", { identifier = i,colourDescriptor = sequence, descriptor = setup.descriptor })
 		end
 	end
 	factory:delete() 																-- no longer need the factory
 
-	self.m_usesCollisions = data.descriptor.collidable 								-- save the collision flag
+	self.m_usesCollisions = setup.descriptor.collidable 							-- save the collision flag
 	local timeEnd = system.getTimer() + 1500 										-- allow at most 1.5 seconds for this bit
 	repeat
 		local list = self.m_collisionChecker:getCollisions(10) 						-- look for collisions, trying to maximise space

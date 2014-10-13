@@ -30,8 +30,8 @@ require("utils.simplescene")																	-- simple scenes.
 local fm = require("utils.fontmanager")															-- bitmap font manager
 require("utils.stubscene")																		-- stub scenes for development.
 require("scene.game")																			-- main game scene
-require("game.carousel")																		-- carousel object
-require("game.levelmanager")
+require("scene.setup")																			-- setup scene
+require("game.levelmanager")																	-- level manager.
 
 --- ************************************************************************************************************************************************************************
 --																				Start Up
@@ -67,22 +67,14 @@ manager:addManagedState("title",
 						{ next = "level"})
 
 manager:addManagedState("level",																-- level selector scene
-						Framework:new("utils.stubscene",{ name = "level", targets = { next = "Game"}}),
+						Framework:new("scene.setup",{ }),
 						{ next = "game" })
 
 manager:addManagedState("game",																	-- game scene
 						Framework:new("scene.game.manager",{}),
 						{ next = "level" })
 
-local descriptor = {}																			-- default empty descriptor.
-descriptor.rotation = { start = 120, min = 120,max = 360, acc = 0 }
-descriptor.velocity = { start = 100,min = 100,max = 1974, collide = 105 }
-descriptor.wrappable = false
-descriptor.collidable = true
-descriptor.reversable = true
-
-
-manager:start("game",{ descriptor = descriptor, count = 6, segments = 4, time = 22 }) 			-- and start.
+manager:start("game",{ level = 12 }) 															-- and start.
 
 --- ************************************************************************************************************************************************************************
 --[[
@@ -95,3 +87,4 @@ manager:start("game",{ descriptor = descriptor, count = 6, segments = 4, time = 
 --- ************************************************************************************************************************************************************************
 
 -- TODO: think about how the swipe-level thing will work ? swipeable group ?
+-- TODO: proper levels and testing.

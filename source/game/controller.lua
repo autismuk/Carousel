@@ -83,6 +83,7 @@ function Controller:onMessage(sender,message,body)
 
 	if message == "win" or message == "lose" then 
 		self:setControllableEnabled(false)											-- stop everything
+		self:sendMessage("musicPlayer","stop")										-- stop the music player.
 		local text = "Time up !"													-- pick the display message.
 		if message == "win" then 													-- if won
 			text = "Goal In !" 														-- goal in
