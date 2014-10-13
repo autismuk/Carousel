@@ -88,13 +88,14 @@ function Controller:onMessage(sender,message,body)
 		if message == "win" then 													-- if won
 			text = "Goal In !" 														-- goal in
 			Framework.fw.levelManager:completed() 									-- mark it as completed
+			self:playSound("win")
 		end 
 		local tmp,carousels = self:query("carousel") 								-- kill all carousels.
 		for _,ref in pairs(carousels) do ref:kill() end
 		local tObj 																	-- end display
 		tObj = Framework:new("control.text", { text = text, font = "jandles",fontSize = display.contentWidth / 16, 
 													xScale = 0.1,yScale = 0.1, alpha = 0,
-													 transition = { xScale = 1,yScale = 1,alpha = 1, rotation = 360*2 , time = 1000,
+													 transition = { xScale = 1,yScale = 1,alpha = 1, rotation = 360*4 , time = 2000,
 													 				onComplete = function(obj)
 													 						timer.performWithDelay(2000,function() 
 													 							obj:removeSelf()

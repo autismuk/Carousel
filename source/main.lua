@@ -40,7 +40,7 @@ require("game.levelmanager")																	-- level manager.
 math.randomseed(system.getTimer())
 
 Framework:new("audio.sound",																	-- create sounds object, not much in this game.
-					{ sounds = { "correct","wrong" } })
+					{ sounds = { "correct","wrong","win" } })
 
 
 local manager = Framework:new("game.manager") 													-- Create a new game manager and then add states.
