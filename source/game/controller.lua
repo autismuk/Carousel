@@ -8,6 +8,8 @@
 ---
 --- ************************************************************************************************************************************************************************
 
+require("utils.sound")
+
 --- ************************************************************************************************************************************************************************
 --																	Collisions Manager Object
 --- ************************************************************************************************************************************************************************
@@ -23,13 +25,15 @@ function Controller:constructor(info)
 	self:tag("enterFrame,gamecontroller")											-- handle enterFrame and self identify
 	self.m_collisionTest = info.testForCollision 									-- remember if we do collisions on this level.
 	self.m_collisionChecker = Framework:new("game.collision.checker") 				-- helper for collision checking
+	self.m_selected = nil 															-- currently selected object
 end 
 
 --//	Delete a game controller.
 
 function Controller:destructor() 	
 	self:setControllableEnabled(false)												-- stop everything
-	self.m_collisionChecker:delete() self.m_collisionChecker = nil 					-- delete the checker helper.
+	self.m_collisionChecker:delete() self.m_collisionChecker = nil 					-- delete the checker helper
+	self.m_selected = nil
 end
 
 --//	Handle enterFrame
@@ -48,11 +52,58 @@ end
 
 --//	Handle messages
 --//	@sender 	[object]	who sent it
---//	@name 		[string]	message (select, win, lose)
+--//	@message 	[string]	message (select, win, lose)
 --//	@body 		[table]		other data
 
-function Controller:onMessage(sender,name,body)
-	print(name,body.object)
+function Controller:onMessage(sender,message,body)
+	if message == "select" then 
+		if self.m_selected == nil then 												-- none currently selected 
+			self.m_selected = body.object 											-- this one is selected
+			self.m_selected:setSelected(true)
+		elseif self.m_selected == body.object then 									-- clicked on the currently selected one.
+			self.m_selected:setSelected(false)										-- deselect it
+			self.m_selected = nil
+		else 																		-- one selected object. 
+			if self.m_selected:matches(body.object) then 							-- are they a pair ?
+				self.m_selected:setSelected(false) 									-- yes, deselect the selected one
+				self.m_selected:kill()												-- kill both
+				body.object:kill() 
+				self.m_selected = nil 
+				self:playSound("correct")
+				local count = self:query("carousel")								-- how many carousel objects are there ?
+				if count == 0 then self:sendMessage("gamecontroller","win") end 	-- if zero then win.
+			else 																	-- no they aren't. 
+				self.m_selected:setSelected(false) 									-- just deselect.
+				self.m_selected = nil 
+				self:playSound("wrong")
+			end
+		end
+	end
+
+
+	if message == "win" or message == "lose" then 
+		self:setControllableEnabled(false)											-- stop everything
+		local text = "Time up !"													-- pick the display message.
+		if message == "win" then 													-- if won
+			text = "Goal In !" 														-- goal in
+			Framework.fw.levelManager:completed() 									-- mark it as completed
+		end 
+		local tmp,carousels = self:query("carousel") 								-- kill all carousels.
+		for _,ref in pairs(carousels) do ref:kill() end
+		local tObj 																	-- end display
+		tObj = Framework:new("control.text", { text = text, font = "jandles",fontSize = display.contentWidth / 16, 
+													xScale = 0.1,yScale = 0.1, alpha = 0,
+													 transition = { xScale = 1,yScale = 1,alpha = 1, rotation = 360*2 , time = 1000,
+													 				onComplete = function(obj)
+													 						timer.performWithDelay(2000,function() 
+													 							obj:removeSelf()
+													 							self:performGameEvent("next")
+													 						end
+													 					)
+
+													 				end } })
+	end
+
 end 
 
 --//	Handle collision between two objects

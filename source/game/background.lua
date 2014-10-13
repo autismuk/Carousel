@@ -8,21 +8,23 @@
 ---
 --- ************************************************************************************************************************************************************************
 
+require("utils.controllable")
 
 --- ************************************************************************************************************************************************************************
 --																			Background Object
 --- ************************************************************************************************************************************************************************
 
-local Background = Framework:createClass("game.background")
+local Background = Framework:createClass("game.background","system.controllable")
 
 --//	Create a Background object,  given the colour descriptor, colour table and level descriptor
 --//	@info 	[table]	constructor information
 
 function Background:constructor(info)
 	self.m_group = display.newGroup() 												-- create a group for the Background object
+	self.m_timeAllowed = info.time 													-- time to complete
 	local r = display.newRect(self.m_group,0,0,display.contentWidth,display.contentHeight)
 	r.anchorX,r.anchorY = 0,0 
-	r.anchorX,r.anchorY = 0,0 												-- tile it.
+	r.anchorX,r.anchorY = 0,0 														-- tile it.
 	display.setDefault("textureWrapX","repeat")
 	display.setDefault("textureWrapY","repeat")
 	r.fill = { type = "image", filename = "images/tile.jpg" }
@@ -46,7 +48,9 @@ function Background:getDisplayObjects()
 end
 
 function Background:onEnterFrame(dt)
+	if not self:isEnabled() then return end 										-- must be enabled.
 	self.m_time = (self.m_time or 0) + dt 											-- track time.
+	self.m_timerPercent = self.m_time / self.m_timeAllowed * 100 					-- calculate percentage
 	if self.m_timerPercent > 10 then 
 		local timeScalar = self.m_timerPercent / 10 + 1
 		local percent = self.m_timerPercent + math.sin(self.m_time*timeScalar) * 3 / 2
@@ -56,6 +60,10 @@ function Background:onEnterFrame(dt)
 		self.m_timerRectangle.alpha = 0.6
 	else 
 		self.m_timerRectangle.alpha = 0
+	end
+	if self.m_timerPercent >= 100 then 												-- time up 
+		transition.to(self.m_timerRectangle,{ alpha = 0, time = 500 })
+		self:sendMessage("gamecontroller","lose")									-- tell the controller we have lost.
 	end
 end 
 

@@ -116,7 +116,7 @@ end
 --//	@e 	[event]		event data
 
 function Carousel:tap(e)
-	if self:isInPlay() then 														-- if game actually ongoing.
+	if self:isInPlay() and self:isEnabled() then 									-- if game actually ongoing.
 		self:sendMessage("gameController","select", { object = self })				-- send a 'select' message to the game controller.
 	end
 end 
@@ -284,7 +284,7 @@ function Carousel:createCarousel()
 	r1.strokeWidth = 3 r1:setStrokeColor(0,0,0)
 	self.m_selector = display.newCircle(g,0,0,100+frame.strokeWidth*0.75+12) 		-- and the pulsing selector.
 	self.m_selector:setFillColor(0,0,0,0) self.m_selector.strokeWidth = 14
-	self.m_selector:setStrokeColor(1,1,0) 
+	self.m_selector:setStrokeColor(1,0,0) 
 	self.m_selector.alpha = 0 														-- which initially you can't see
 
 	-- display.newText(self.m_group,"#"..self.m_identifier,0,0,native.systemFont,48)

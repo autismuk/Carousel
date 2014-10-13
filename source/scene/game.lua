@@ -35,7 +35,7 @@ end
 
 function GameScene:preOpen(manager,data,resources)
 	local scene = Framework:new("game.scene")										-- create a new scene
-	scene:new("game.background",{})
+	scene:new("game.background",{ time = data.time or 60 })
 	scene:new("audio.music") 														-- start the background music.
 	scene:new("control.leftarrow", { x = 5,y = 96,									-- add a 'give up' button
 									 r = 139/255, g = 69/255, b = 19/255,	 		

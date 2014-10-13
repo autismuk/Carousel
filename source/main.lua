@@ -10,7 +10,7 @@
 
 ApplicationDescription = { 																		-- application description.
 	appName = 		"Carousel",
-	version = 		"0.1",
+	version = 		"1.0",
 	developers = 	{ "Paul Robson" },
 	email = 		"paul@robsons.org.uk",
 	fqdn = 			"uk.org.robsons.brainwash", 												-- must be unique for each application.
@@ -31,12 +31,13 @@ local fm = require("utils.fontmanager")															-- bitmap font manager
 require("utils.stubscene")																		-- stub scenes for development.
 require("scene.game")																			-- main game scene
 require("game.carousel")																		-- carousel object
+require("game.levelmanager")
 
 --- ************************************************************************************************************************************************************************
 --																				Start Up
 --- ************************************************************************************************************************************************************************
 
-math.randomseed( 42 )
+math.randomseed(system.getTimer())
 
 Framework:new("audio.sound",																	-- create sounds object, not much in this game.
 					{ sounds = { "correct","wrong" } })
@@ -81,7 +82,7 @@ descriptor.collidable = true
 descriptor.reversable = true
 
 
-manager:start("game",{ descriptor = descriptor, count = 6, segments = 4 }) 						-- and start.
+manager:start("game",{ descriptor = descriptor, count = 6, segments = 4, time = 22 }) 			-- and start.
 
 --- ************************************************************************************************************************************************************************
 --[[
@@ -93,8 +94,4 @@ manager:start("game",{ descriptor = descriptor, count = 6, segments = 4 }) 					
 --]]
 --- ************************************************************************************************************************************************************************
 
--- TODO: Handling of select/deselect/pairing code.
--- TODO: Sound effects
--- TODO: Background and timer
--- TODO: Add completion succeed/fail
 -- TODO: think about how the swipe-level thing will work ? swipeable group ?
