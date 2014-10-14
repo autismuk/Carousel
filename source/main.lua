@@ -50,7 +50,7 @@ manager:addManagedState("title",
 							constructor = function(storage,group,scene,manager)					-- just create some animated bitmap headings.
 								local r = display.newRect(group,0,0,display.contentWidth,display.contentHeight)
 								r.anchorX,r.anchorY = 0,0 r.alpha = 1 r:setFillColor(0,0,0.5)
-								local ver = display.newText(group,"v"..ApplicationDescription.version,0,0,system.nativeFont,10)
+								local ver = display.newText(group,"v"..ApplicationDescription.version,0,0,system.nativeFont,14)
 								ver.anchorX,ver.anchorY = 0,0 ver:setFillColor(0,1,0)
 								storage.t1 = display.newBitmapText(group,"Carousel",display.contentWidth/2,display.contentHeight * 0.2,"jandles",display.contentWidth*0.4):setTintColor(1,1,0)
 								storage.t2 = display.newBitmapText(group,"A Matching Puzzle Game",display.contentWidth/2,display.contentHeight * 0.55,"jandles",display.contentWidth/7):setTintColor(1,0.5,0)
@@ -74,7 +74,7 @@ manager:addManagedState("game",																	-- game scene
 						Framework:new("scene.game.manager",{}),
 						{ next = "level" })
 
-manager:start("title",{ level = 12 }) 															-- and start.
+manager:start("title",{ level = 3 }) 															-- and start.
 
 --- ************************************************************************************************************************************************************************
 --[[
@@ -86,5 +86,5 @@ manager:start("title",{ level = 12 }) 															-- and start.
 --]]
 --- ************************************************************************************************************************************************************************
 
--- TODO: Add in adverts
+-- TODO: Add in adverts (timing issue)
 -- TODO: proper levels and testing.

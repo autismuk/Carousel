@@ -283,9 +283,9 @@ function Carousel:createCarousel()
 	r1.strokeWidth = 3 r1:setStrokeColor(0,0,0)										-- black lines framing the brown frame.
 	r1 = display.newCircle(g,0,0,100+frame.strokeWidth/2) r1:setFillColor(0,0,0,0)
 	r1.strokeWidth = 3 r1:setStrokeColor(0,0,0)
-	self.m_selector = display.newCircle(g,0,0,100+frame.strokeWidth*0.75+12) 		-- and the pulsing selector.
-	self.m_selector:setFillColor(0,0,0,0) self.m_selector.strokeWidth = 14
-	self.m_selector:setStrokeColor(1,0,0) 
+	self.m_selector = display.newCircle(g,0,0,100+frame.strokeWidth*0.75+15) 		-- and the pulsing selector.
+	self.m_selector:setFillColor(0,0,0,0) self.m_selector.strokeWidth = 20
+	self.m_selector:setStrokeColor(0,0.5,1) 
 	self.m_selector.alpha = 0 														-- which initially you can't see
 
 	-- display.newText(self.m_group,"#"..self.m_identifier,0,0,native.systemFont,48)
