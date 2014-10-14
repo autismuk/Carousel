@@ -8,15 +8,15 @@
 ---
 --- ************************************************************************************************************************************************************************
 
-require("game.background")
-require("game.carousel")
-require("utils.buttons")
-require("game.collisions")
-require("game.controller")
-require("utils.music")
-require("utils.text")
-require("game.factory")
-require("game.leveldescriptor")
+require("game.background")															-- background/timer
+require("game.carousel")															-- carousel object
+require("utils.buttons")															-- buttons
+require("game.collisions")															-- collision manager
+require("game.controller")															-- game controller
+require("utils.music")																-- music player
+require("utils.text")																-- bitmap text object
+require("game.factory")																-- carousel object factory
+require("game.leveldescriptor")														-- level factory
 
 --- ************************************************************************************************************************************************************************
 --																			Create the Scene
