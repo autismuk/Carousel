@@ -9,103 +9,102 @@
 --- ************************************************************************************************************************************************************************
 
 require("utils.pageselector")
+require("utils.swipable")
+require("game.leveldescriptor")
 
 --- ************************************************************************************************************************************************************************
 --//	This is an object which handles swipable pages - it is abstract, having methods to create/delete the swipable bit and so should be subclassed. It wraps it in 
 --//	a group with a top layer which detects swipes and scrolls the page left/right accordingly, sending messages to pageselector objects to show which page it is.
 --- ************************************************************************************************************************************************************************
 
-local AbstractSwipable = Framework:createClass("control.swipe.base")
+local SetupDisplay = Framework:createClass("control.swipe.level","control.swipe.base")
 
---//	Create the swipable page
---//	@info 	[table]		constructor info
-
-function AbstractSwipable:constructor(info)
-	self.m_overGroup = display.newGroup() 														-- this is the group that holds everything.
-	self.m_contentGroup = display.newGroup() 													-- this group holds the content
-	self.m_data = {} 																			-- members for the thing being swiped
-	self:pageConstructor(self.m_contentGroup,self.m_data,info)									-- create the actual content.
-	self.m_overGroup:insert(self.m_contentGroup)												-- put the content in the overall group
-	self.m_pageCount = math.floor((self.m_contentGroup.width + display.contentWidth - 2)/		-- calculate how many pages there are.
-																				display.contentWidth)
-	self:sendMessage("swipepagetracker","count", { count = self.m_pageCount })					-- tell the page tracker there are that many pages.
-	self.m_swipeTracker = display.newRect(self.m_overGroup,0,0, 								-- this tracks touches
-													display.contentWidth,display.contentHeight)		
-	self.m_swipeTracker.anchorX,self.m_swipeTracker.anchorY = 0,0 								-- position and alpha
-	self.m_swipeTracker.alpha = 0.02 self.m_swipeTracker:setFillColor(1,0,1)
-	self.m_swipeTracker:addEventListener("touch",self)											-- and pick up touches.
-	self.m_currentPage = 1
-	self.m_canSwipe = false 																	-- set to true when we can swipe
-end 
-
---//	Tidy up
-
-function AbstractSwipable:destructor()
-	self.m_swipeTracker:removeEventListener("touch",self) 										-- remove event listener.
-	self:pageDestructor(self.m_contentGroup,self.m_data)										-- tidy up content if needed (listeners, timers etc.)
-	self.m_overGroup:removeSelf() self.m_overGroup = nil self.m_contentGroup = nil 				-- and tidy everything else up.
-	self.m_swipeTracker = nil
-end 
-
---//	Get display objects for scene
---//	@return [array]	list of display objects
-
-function AbstractSwipable:getDisplayObjects()
-	return { self.m_overGroup }
-end 
-
---//	Handle touches. Start and End of a touch enable/disable the possibility of swiping - moved is used to actually detect it.
---//	@event 	[table]	event data
-
-function AbstractSwipable:touch(event)
-	local passThrough = false 																	-- true if not passed through	
-	if event.phase == "began" then 																-- beginning a touch, therefore we may be swiping.
-		self.m_canSwipe = true
-	end
-	if event.phase == "moved" and self.m_canSwipe then  										-- if swipe allowed and moving.
-		local dx,dy = event.x-event.xStart,event.y-event.yStart 								-- work out swipe movement
-		if math.abs(dy) < display.contentHeight / 32 and 										-- not moved too far vertically 
-		   math.abs(dx) > display.contentWidth / 8 then 										-- and far enough horizontally 
-		   	passThrough = true 																	-- swipe detected - don't pass through
-		   	self.m_canSwipe = false 															-- can't swipe any more on this touch.
-		   	if dx < 0 then self:changePage(1) else self:changePage(-1) end 						-- go to new page.
-		end
-	end
-	if event.phase == "ended" or event.phase == "cancelled" then 								-- disable swipe at end of touch
-		self.m_canSwipe = false 																-- should not be strictly necessary.
-	end
-	return passThrough 
-end 
-
---//	Change to a new page and update everything.
---//	@offset [number]	offset from current page
-
-function AbstractSwipable:changePage(offset)
-	local newPage = math.max(1,math.min(self.m_currentPage+offset,self.m_pageCount))			-- work out new page
-	if newPage ~= self.m_currentPage then 														-- page changed ?
-		self.m_currentPage = newPage 															-- update page.
-		transition.to(self.m_contentGroup,														-- transition the position to display that bit
-								{ x = -display.contentWidth * (self.m_currentPage-1), time = 400 })
-		self:sendMessage("swipepagetracker","select",{ page = self.m_currentPage})				-- update page tracker.
-	end
-end 
 
 --//	Dummy function - creates page
 --//	@group 	[display group]		should go in here, beginning from 0,0 and don't change the anchors !
 --//	@data 	[table]				anything you need to keep for this page
 --//	@info 	[table]				info from constructor
 
-function AbstractSwipable:pageConstructor(group,data,info)
-	local t = display.newText(group,"This is the swiping page mark number one",0,120,native.systemFont,160)
-	t.anchorX,t.anchorY = 0,0 
+function SetupDisplay:pageConstructor(group,data,info)
+	local ld = Framework:new("game.levelDescriptor")								-- create a level descriptor
+	data.m_totalLevels = ld:getCount()												-- so we can get the total number of levels.
+	ld:delete() 																	-- remove the level descriptor.
+	data.m_buttons = {} 															-- array of button selector objects.
+	data.m_completed = Framework.fw.levelManager:getCompletedLevel() 				-- get the completed levels.
+	local bgr = display.newRect(group,0,0,display.contentWidth * math.floor((data.m_totalLevels+1)/12),display.contentHeight)
+	bgr.anchorX,bgr.anchorY = 0,0
+	display.setDefault("textureWrapX","repeat")
+	display.setDefault("textureWrapY","repeat")
+	bgr.fill = { type = "image", filename = "images/tile2.gif" }
+	bgr.fill.scaleX,bgr.fill.scaleY = 0.04,0.04
+	for n = 1,data.m_totalLevels do 												-- for each level.
+		local i = n - 1 															-- works better for 0-3.
+		local x = (i % 3+1) * display.contentWidth / 4 								-- work out x,y
+		local y = (math.floor(i / 3) % 4 + 1.5) * display.contentHeight / 6
+		x = x + math.floor(i / 12) * display.contentWidth
+		local canAccess = (n <= data.m_completed + 1)								-- can this button be clicked.
+		data.m_buttons[n] = self:createButton(x,y,n,canAccess) 						-- create it
+		if canAccess then 															-- if can be used
+			data.m_buttons[n]:addEventListener("tap",data.owner)					-- add event listener sending message here
+		end
+		group:insert(data.m_buttons[n])												-- add to group
+	end 
+	data.m_headings = {}															-- create level headings.
+	local difficulty = { "Easy","Moderate","Insane" }
+	for i = 1,math.floor((data.m_totalLevels+11)/12) do 
+		data.m_headings[i] = display.newBitmapText(group,difficulty[i] .. " levels",display.contentWidth * (i-0.5), display.contentHeight * 0.1,"jandles",display.contentWidth/4)
+		data.m_headings[i]:setTintColor(1,0.5,0)
+	end
+end 
+
+--//	Create a button
+--//	@x 	[number]	position
+--//	@y 	[number]	position
+--//	@n 	[number]	level number
+--//	@isAllowed [boolean] can this one be played.
+
+function SetupDisplay:createButton(x,y,n,isAllowed)
+	local group = display.newGroup()												-- each button has a group
+	local button = display.newImage(group,"images/button.png",x,y) 					-- draw the button
+	button.width,button.height = display.contentWidth/5,display.contentWidth/5
+	local obj = display.newText(group,""..n,x,y,native.systemFont,display.contentWidth/12) 	-- add the text
+	obj:setFillColor(1,1,0) 
+	if not isAllowed then 
+		local s = display.contentWidth/20
+		local l
+		l = display.newLine(group,x-s,y-s,x+s,y+s) l.strokeWidth = display.contentWidth/60 l:setStrokeColor(1,0,0)
+		l = display.newLine(group,x+s,y-s,x-s,y+s) l.strokeWidth = display.contentWidth/60 l:setStrokeColor(1,0,0)
+	end
+	return group 
+end 
+
+--//	Handle taps
+
+function SetupDisplay:tap(event)
+	local data = self:accessPageData()												-- access the setup data
+	for i = 1,#data.m_buttons do 													-- look for the tapped button
+		if data.m_buttons[i] == event.target then 									-- if it is found ...
+			self:performGameEvent("next", { level = i })
+		end 
+	end
 end 
 
 --//	Dummy function - destroys page
 --//	@group 	[display group]		should go in here, beginning from 0,0 and don't change the anchors !
 --//	@data 	[table]				anything you need to keep for this page
 
-function AbstractSwipable:pageDestructor(group,data)
+function SetupDisplay:pageDestructor(group,data)
+	for i = 1,#data.m_headings do data.m_headings[i]:removeSelf() end 
+	for i = 1,#data.m_buttons do 
+		if i <= data.m_completed + 1 then
+			data.m_buttons[i]:removeEventListener("tap",data.owner)
+		end 
+		data.m_buttons[i]:removeSelf()
+	end
+	data.m_headings = nil data.m_buttons = nil
 end
+
+--]]
 
 --- ************************************************************************************************************************************************************************
 --																	Setup Scene
@@ -115,9 +114,9 @@ local SetupScene = Framework:createClass("scene.setup","game.scenemanager")
 
 function SetupScene:preOpen(manager,data,resources)
 	local scene = Framework:new("game.scene")
+	scene:new("control.swipe.level",{})
 	scene:new("control.audio", { r = 1,g = 1, b = 0 })											-- add an audio control
 	scene:new("control.selector.diamond",{})													-- and a page selector, these aren't moving with the swipe obviously.
-	scene:new("control.swipe.base",{})
 	return scene 
 end
 

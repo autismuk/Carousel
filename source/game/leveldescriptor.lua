@@ -28,6 +28,9 @@ function LevelDescriptor:get(levelNumber)
 	return { descriptor = descriptor, count = 2, segments = 4, time = 22 }
 end 
 
+function LevelDescriptor:getCount()
+	return 36 
+end 
 
 --- ************************************************************************************************************************************************************************
 --[[

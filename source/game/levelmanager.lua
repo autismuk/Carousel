@@ -39,6 +39,7 @@ end
 function LevelManager:completed()
 	assert(self.m_currentLevel ~= nil)
 	local docStore = Framework.fw.documentStore:access() 																-- access document store
+	print("Completed ",self.m_currentLevel," of ",Framework.fw.levelManager:getCompletedLevel())
 	if self.m_currentLevel > docStore.completedLevel then 																-- beaten previously best level.
 		docStore.completedLevel = self.m_currentLevel 																	-- write it back into the docStore.
 		Framework.fw.documentStore:update() 																			-- and update it
@@ -48,7 +49,6 @@ end
 Framework:new("game.levelmanager") 																						-- it's a singleton.
 LevelManager.constructor = nil
 
-print("Completed levels",Framework.fw.levelManager:getCompletedLevel())
 
 --- ************************************************************************************************************************************************************************
 --[[

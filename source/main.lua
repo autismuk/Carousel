@@ -74,7 +74,7 @@ manager:addManagedState("game",																	-- game scene
 						Framework:new("scene.game.manager",{}),
 						{ next = "level" })
 
-manager:start("level",{ level = 12 }) 															-- and start.
+manager:start("title",{ level = 12 }) 															-- and start.
 
 --- ************************************************************************************************************************************************************************
 --[[
@@ -86,5 +86,5 @@ manager:start("level",{ level = 12 }) 															-- and start.
 --]]
 --- ************************************************************************************************************************************************************************
 
--- TODO: think about how the swipe-level thing will work ? swipeable group ?
+-- TODO: which object is leaking ???
 -- TODO: proper levels and testing.
