@@ -275,6 +275,7 @@ function Carousel:createCarousel()
 		poly:setFillColor(c[1],c[2],c[3]) 											-- colour the polygon.
 		poly.anchorX,poly.anchorY = 0,0.5 											-- anchor point at the 'sharp end'
 		poly.rotation = (segment - 1) * segAngle 									-- rotate into position
+		poly.strokeWidth = display.contentWidth/320 poly:setStrokeColor(0,0,0)
 	end
 	local frame = display.newCircle(g,0,0,100) frame:setFillColor(0,0,0,0) 			-- this is the brown frame.
 	frame.strokeWidth = 12 frame:setStrokeColor(160/255,69/255,13/255)

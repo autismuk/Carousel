@@ -98,7 +98,7 @@ function Controller:onMessage(sender,message,body)
 													 transition = { xScale = 1,yScale = 1,alpha = 1, rotation = 360*4 , time = 2000,
 													 				onComplete = function(obj)
 													 						timer.performWithDelay(2000,function() 
-													 							obj:removeSelf()
+													 							tObj:delete()
 													 							self:performGameEvent("next")
 													 						end
 													 					)

@@ -68,12 +68,12 @@ function SetupDisplay:createButton(x,y,n,isAllowed)
 	local button = display.newImage(group,"images/button.png",x,y) 					-- draw the button
 	button.width,button.height = display.contentWidth/5,display.contentWidth/5
 	local obj = display.newText(group,""..n,x,y,native.systemFont,display.contentWidth/12) 	-- add the text
-	obj:setFillColor(1,1,0) 
+	obj:setFillColor(0,0,0) 
 	if not isAllowed then 
 		local s = display.contentWidth/20
 		local l
-		l = display.newLine(group,x-s,y-s,x+s,y+s) l.strokeWidth = display.contentWidth/60 l:setStrokeColor(1,0,0)
-		l = display.newLine(group,x+s,y-s,x-s,y+s) l.strokeWidth = display.contentWidth/60 l:setStrokeColor(1,0,0)
+		l = display.newLine(group,x-s,y-s,x+s,y+s) l.strokeWidth = display.contentWidth/80 l:setStrokeColor(1,0,0)
+		l = display.newLine(group,x+s,y-s,x-s,y+s) l.strokeWidth = display.contentWidth/80 l:setStrokeColor(1,0,0)
 	end
 	return group 
 end 
@@ -85,6 +85,7 @@ function SetupDisplay:tap(event)
 	for i = 1,#data.m_buttons do 													-- look for the tapped button
 		if data.m_buttons[i] == event.target then 									-- if it is found ...
 			self:performGameEvent("next", { level = i })
+			--print(i)
 		end 
 	end
 end 
@@ -114,6 +115,7 @@ local SetupScene = Framework:createClass("scene.setup","game.scenemanager")
 
 function SetupScene:preOpen(manager,data,resources)
 	local scene = Framework:new("game.scene")
+	--Framework:dump()
 	scene:new("control.swipe.level",{})
 	scene:new("control.audio", { r = 1,g = 1, b = 0 })											-- add an audio control
 	scene:new("control.selector.diamond",{})													-- and a page selector, these aren't moving with the swipe obviously.
