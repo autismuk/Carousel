@@ -86,5 +86,6 @@ manager:start("level",{ level = 3 }) 															-- and start.
 --]]
 --- ************************************************************************************************************************************************************************
 
+-- TODO: convert level raw data to useable data
 -- TODO: Add in adverts (timing issue)
--- TODO: proper levels and testing.
+-- TODO: testing

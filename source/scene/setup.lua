@@ -122,7 +122,8 @@ function SetupScene:preOpen(manager,data,resources)
 	scene:new("control.swipe.level",{})
 	scene:new("control.audio", { x = 17,r = 1,g = 1, b = 0 })											-- add an audio control
 	scene:new("control.selector.diamond",{})													-- and a page selector, these aren't moving with the swipe obviously.
-	scene:new("gui.text.list", { items = { "Easy","Moderate","Hard"}, x = 83,y = 92, tint = { 1,1,0}, font = { name = "jandles", size = display.contentWidth/8}}):name("skillLevel")
+	scene:new("gui.text.list", { items = { "Easy","Moderate","Hard"}, x = 83,y = 92, tint = { 1,1,0}, key = "difficulty",
+								 font = { name = "jandles", size = display.contentWidth/8}}):name("skillLevel")
 	return scene 
 end
 
