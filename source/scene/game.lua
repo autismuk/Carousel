@@ -38,7 +38,7 @@ end
 
 function GameScene:preOpen(manager,data,resources)
 	local scene = Framework:new("game.scene")										-- create a new scene
-	local setup = GameScene.levelDescriptor:get(data.level) 						-- get information pertaining to this.
+	local setup = GameScene.levelDescriptor:get(data.level,data.skill) 				-- get information pertaining to this.
 	Framework.fw.levelManager:setLevel(data.level) 									-- let level tracking manager know which level.
 	scene:new("game.background",{ time = setup.time or 60 }) 						-- create background with timer
 	scene:new("audio.music") 														-- start the background music.

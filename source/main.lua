@@ -74,7 +74,7 @@ manager:addManagedState("game",																	-- game scene
 						Framework:new("scene.game.manager",{}),
 						{ next = "level" })
 
-manager:start("title",{ level = 3 }) 															-- and start.
+manager:start("level",{ level = 3 }) 															-- and start.
 
 --- ************************************************************************************************************************************************************************
 --[[

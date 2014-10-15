@@ -15,25 +15,27 @@
 
 local LevelDescriptor = Framework:createClass("game.leveldescriptor")
 
-function LevelDescriptor:constructor(info) 
+--//	The constructor parses the raw text data below, exported from the google docs spreadsheet, and converts it into a series of tables, one for each level.
+--//	afterwards each level has a table with members defined which define that level.
+
+ function LevelDescriptor:constructor(info) 
 	self.m_rawData = {}
 	local sourceText = self.rawTextData:gsub("\n","|").."|"											-- replace carriage returns with vertical bar, make sure there is a beginning one.
+	local members
 	while sourceText ~= "" do 
 		local pos = sourceText:find("|")															-- find split
 		local line = sourceText:sub(1,pos-1)														-- first bit.
-		sourceText = sourceText:sub(pos+1)
-		local id  id,line = line:match("^(%d+),(.*)")												-- look for number,<data>
-		if id ~= nil then 																			-- found something
-			local data = {}
-			self.m_rawData[id*1] = data 															-- start a new line.
-			line = line .. ","																		-- append a comma.
-			while line ~= "" do 																	-- now split that up
-				local pos = line:find(",")															-- around commas
-				data[#data+1] = self:process(line:sub(1,pos-1)) line = line:sub(pos+1)				-- copy it in to the array structure
-				print(#data,data[#data])
+		sourceText = sourceText:sub(pos+1) 															-- and the rest
+		local items = self:split(line) 																-- split up into items
+		if items[1]:lower() == "level" then members = items end 									-- have we found the list of headings ?
+		if items[1]:match("^%d+$") ~= nil then 														-- found a level (first is a number)
+			local n= items[1] * 1 																	-- convert level to a number
+			self.m_rawData[n] = {} 																	-- create an empty table.
+			for j = 2,#items do 																	-- copy all elements into the table
+				self.m_rawData[members[j]] = self:process(items[j])									-- using headings as members
 			end
 		end
-	end
+	end	
 end 
 
 --//	Process text - y and "" become boolean, % converted to multiplier, numbers to number type, strings first character only l/c
@@ -54,11 +56,29 @@ function LevelDescriptor:destructor()
 	self.m_rawData = nil 
 end
 
+--//	Split a comma seperated string into an array, spaces removed.
+--//	@line 	[string]	line to split
+--//	@return [array]		array of strings.
+
+function LevelDescriptor:split(line)
+	local data = {}																					-- empty table
+	line = line .. ","																				-- append a comma so we know it ends in one.
+	line = line:gsub("%s+","")																		-- remove spaces.
+	while line ~= "" do 																			-- now split that up
+		local pos = line:find(",")																	-- around commas
+		data[#data+1] = line:sub(1,pos-1)															-- add to array
+		line = line:sub(pos+1)
+	end 
+	return data 																					-- return array.
+end
+
 --//	Get the descriptor for the given level number.
 --//	@levelNumber 	[number]	level number
+--//	@skillMultiplier [number]	skill scalar - < 1 is easier - more time, slower etc.
 --//	@return 		[table]		description of the level
 
-function LevelDescriptor:get(levelNumber)
+function LevelDescriptor:get(levelNumber,skillMultiplier)
+	print(levelNumber,skillMultiplier)
 	local descriptor = {}																			-- default empty descriptor.
 	descriptor.rotation = { start = 120, min = 120,max = 360, acc = 0 }
 	descriptor.velocity = { start = 100,min = 100,max = 1974, collide = 105 }
@@ -76,12 +96,12 @@ function LevelDescriptor:getCount()
 end 
 
 
---
---	Cut and Pasted from CSV exports.
---
-
-LevelDescriptor.rawTextData = [===[																	
-Level,Pieces,Segments,Rotating,Moving,Wrap?,Alpha?,Size?,Reverse?,Velocity,Rotate,Base time,Special,Difficulty,Actual time
+--- ************************************************************************************************************************************************************************
+--																	Cut and Pasted from CSV export.
+--- ************************************************************************************************************************************************************************
+							 																		-- whereas these lines are a direct copy.
+LevelDescriptor.rawTextData = [===[	
+Level,pieces,segments,isRotating,isMoving,isWrapping,alphaFunc,radiusFunc,isReversable,velocity,rotation,baseTime,special,difficulty,actualTime
 1,2,3,,,,,,,,,30,,150%,45
 2,4,3,,,,,,,,,60,,100%,60
 3,6,3,,,,,,,,,90,,100%,90
@@ -120,7 +140,7 @@ Level,Pieces,Segments,Rotating,Moving,Wrap?,Alpha?,Size?,Reverse?,Velocity,Rotat
 36,32,8,y,y,,,Heavy,y,Fast,Fast,480,,100%,480
 ,,,,,,,,,,,,,,
 ,Seconds/Segment,,,,,,,,,,,,,
-,15,,,,,,,,,,,,,
+,15,,,,,,,,,,,,,																
 ]===]
 
 

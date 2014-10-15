@@ -10,6 +10,7 @@
 
 require("utils.pageselector")
 require("utils.swipable")
+require("utils.gui")
 require("game.leveldescriptor")
 
 --- ************************************************************************************************************************************************************************
@@ -50,7 +51,7 @@ function SetupDisplay:pageConstructor(group,data,info)
 		group:insert(data.m_buttons[n])												-- add to group
 	end 
 	data.m_headings = {}															-- create level headings.
-	local difficulty = { "Easy","Moderate","Insane" }
+	local difficulty = { "Wimpish","Meh...","Insane" }
 	for i = 1,math.floor((data.m_totalLevels+11)/12) do 
 		data.m_headings[i] = display.newBitmapText(group,difficulty[i] .. " levels",display.contentWidth * (i-0.5), display.contentHeight * 0.1,"jandles",display.contentWidth/4)
 		data.m_headings[i]:setTintColor(1,0.5,0)
@@ -84,7 +85,9 @@ function SetupDisplay:tap(event)
 	local data = self:accessPageData()												-- access the setup data
 	for i = 1,#data.m_buttons do 													-- look for the tapped button
 		if data.m_buttons[i] == event.target then 									-- if it is found ...
-			self:performGameEvent("next", { level = i })
+			local skill = Framework.fw.skillLevel:getSelected() 					-- get gui skill level
+			skill = (skill - 2) * 0.25 + 1 											-- make it 0.75,1,1.25
+			self:performGameEvent("next", { level = i, skill = skill })
 			--print(i)
 		end 
 	end
@@ -117,8 +120,9 @@ function SetupScene:preOpen(manager,data,resources)
 	local scene = Framework:new("game.scene")
 	--Framework:dump()
 	scene:new("control.swipe.level",{})
-	scene:new("control.audio", { r = 1,g = 1, b = 0 })											-- add an audio control
+	scene:new("control.audio", { x = 17,r = 1,g = 1, b = 0 })											-- add an audio control
 	scene:new("control.selector.diamond",{})													-- and a page selector, these aren't moving with the swipe obviously.
+	scene:new("gui.text.list", { items = { "Easy","Moderate","Hard"}, x = 83,y = 92, tint = { 1,1,0}, font = { name = "jandles", size = display.contentWidth/8}}):name("skillLevel")
 	return scene 
 end
 
