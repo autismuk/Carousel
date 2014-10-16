@@ -12,6 +12,9 @@ require("utils.pageselector")
 require("utils.swipable")
 require("utils.gui")
 require("game.leveldescriptor")
+require("utils.admob")
+
+tracker = Framework:new("admob.tracker")											-- used to control whether to show interstitial or not.
 
 --- ************************************************************************************************************************************************************************
 --//	This is an object which handles swipable pages - it is abstract, having methods to create/delete the swipable bit and so should be subclassed. It wraps it in 
@@ -87,7 +90,8 @@ function SetupDisplay:tap(event)
 		if data.m_buttons[i] == event.target then 									-- if it is found ...
 			local skill = Framework.fw.skillLevel:getSelected() 					-- get gui skill level
 			skill = (skill - 2) * 0.25 + 1 											-- make it 0.75,1,1.25
-			self:performGameEvent("next", { level = i, skill = skill })
+			local target = "skipAdvert"
+			self:performGameEvent(tracker:select("next","skipAdvert"), { level = i, skill = skill })
 			--print(i)
 		end 
 	end

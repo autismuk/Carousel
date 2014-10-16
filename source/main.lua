@@ -14,13 +14,15 @@ ApplicationDescription = { 																		-- application description.
 	developers = 	{ "Paul Robson" },
 	email = 		"paul@robsons.org.uk",
 	fqdn = 			"uk.org.robsons.brainwash", 												-- must be unique for each application.
-    admobIDs = 		{ 																			-- admob Identifiers.
-    					ios = "ca-app-pub-8354094658055499/1749592813", 						-- TODO: Must be interstitial ones !
-						android = "ca-app-pub-8354094658055499/1609992011"
-					},
-	advertType = 	"banner",																	-- show banners. -- TODO: Change to interstitial
+--    admobIDs = 		{ 																			-- admob Identifiers.
+--    					ios = "ca-app-pub-8354094658055499/1749592813", 						-- TODO: Must be interstitial ones !
+--						android = "ca-app-pub-8354094658055499/1609992011"
+--					},
+	advertType = 	"interstitial",
 	showDebug = 	true 																		-- show debug info and adverts.
 }
+
+print("[MAIN] Put in i/s admob IDs")
 
 display.setStatusBar(display.HiddenStatusBar)													-- hide status bar.
 require("strict")																				-- install strict.lua to track globals etc.
@@ -68,6 +70,10 @@ manager:addManagedState("title",
 
 manager:addManagedState("level",																-- level selector scene
 						Framework:new("scene.setup",{ }),
+						{ next = "advert",skipAdvert = "game" })
+
+manager:addManagedState("advert",																-- game scene
+						Framework:new("admob.interstitialscene",{}),
 						{ next = "game" })
 
 manager:addManagedState("game",																	-- game scene
@@ -87,5 +93,5 @@ manager:start("level",{ level = 3 }) 															-- and start.
 --- ************************************************************************************************************************************************************************
 
 -- TODO: convert level raw data to useable data
--- TODO: Add in adverts (timing issue)
+-- TODO: Complete I/S Tracker
 -- TODO: testing
