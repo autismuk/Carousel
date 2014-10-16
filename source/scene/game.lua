@@ -50,10 +50,18 @@ function GameScene:preOpen(manager,data,resources)
 
 	local factory = Framework:new("game.segment.factory",							-- create a factory.
 												{ size = setup.segments, colours = 8 })	
+
+	local ident = {} 																-- create array of identifiers
+	for i = 1,setup.count do ident[i] = i end 
+	for i = 1,setup.count do  														-- and mix them all up.
+		local j = math.random(1,setup.count) 										-- so each carousel has a unique ID but it is random 
+		local t = ident[i] ident[i] = ident[j] ident[j] = t 
+	end
+
 	for i = 1,setup.count / 2 do 													-- n/2 pairs
 		local sequence = factory:create() 											-- get the new sequence.
 		for j = 1,2 do 																-- create two of them.
-			scene:new("game.carousel", { identifier = i,colourDescriptor = sequence, descriptor = setup.descriptor })
+			scene:new("game.carousel", { identifier = ident[i*2+j-2],colourDescriptor = sequence, descriptor = setup.descriptor })
 		end
 	end
 	factory:delete() 																-- no longer need the factory

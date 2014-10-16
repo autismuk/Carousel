@@ -22,8 +22,6 @@ ApplicationDescription = { 																		-- application description.
 	showDebug = 	true 																		-- show debug info and adverts.
 }
 
-print("[MAIN] Put in i/s admob IDs")
-
 display.setStatusBar(display.HiddenStatusBar)													-- hide status bar.
 require("strict")																				-- install strict.lua to track globals etc.
 require("framework.framework")																	-- framework.
@@ -80,7 +78,7 @@ manager:addManagedState("game",																	-- game scene
 						Framework:new("scene.game.manager",{}),
 						{ next = "level" })
 
-manager:start("level",{ level = 3 }) 															-- and start.
+manager:start("title",{ level = 36 }) 															-- and start.
 
 --- ************************************************************************************************************************************************************************
 --[[
@@ -92,5 +90,5 @@ manager:start("level",{ level = 3 }) 															-- and start.
 --]]
 --- ************************************************************************************************************************************************************************
 
--- TODO: testing (test real iOS and Admob interstitial with rapid turnover)
 -- TODO: convert level raw data to useable data
+
