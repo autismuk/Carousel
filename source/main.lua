@@ -14,10 +14,10 @@ ApplicationDescription = { 																		-- application description.
 	developers = 	{ "Paul Robson" },
 	email = 		"paul@robsons.org.uk",
 	fqdn = 			"uk.org.robsons.brainwash", 												-- must be unique for each application.
---    admobIDs = 		{ 																			-- admob Identifiers.
---    					ios = "ca-app-pub-8354094658055499/1749592813", 						-- TODO: Must be interstitial ones !
---						android = "ca-app-pub-8354094658055499/1609992011"
---					},
+    admobIDs = 		{ 																			-- admob Identifiers.
+    					ios = "ca-app-pub-8354094658055499/7057436417", 						-- TODO: Must be interstitial ones !
+						android = "ca-app-pub-8354094658055499/1210562410"
+					},
 	advertType = 	"interstitial",
 	showDebug = 	true 																		-- show debug info and adverts.
 }
@@ -92,6 +92,5 @@ manager:start("level",{ level = 3 }) 															-- and start.
 --]]
 --- ************************************************************************************************************************************************************************
 
+-- TODO: testing (test real iOS and Admob interstitial with rapid turnover)
 -- TODO: convert level raw data to useable data
--- TODO: Complete I/S Tracker
--- TODO: testing

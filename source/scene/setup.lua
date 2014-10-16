@@ -14,7 +14,7 @@ require("utils.gui")
 require("game.leveldescriptor")
 require("utils.admob")
 
-tracker = Framework:new("admob.tracker")											-- used to control whether to show interstitial or not.
+tracker = Framework:new("admob.tracker", { rate = 0.5,start = 0.2 })				-- used to control whether to show interstitial or not.
 
 --- ************************************************************************************************************************************************************************
 --//	This is an object which handles swipable pages - it is abstract, having methods to create/delete the swipable bit and so should be subclassed. It wraps it in 
