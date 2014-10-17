@@ -78,7 +78,7 @@ manager:addManagedState("game",																	-- game scene
 						Framework:new("scene.game.manager",{}),
 						{ next = "level" })
 
-manager:start("title",{ level = 36 }) 															-- and start.
+manager:start("title",{ }) 																		-- and start.
 
 --- ************************************************************************************************************************************************************************
 --[[
@@ -90,5 +90,4 @@ manager:start("title",{ level = 36 }) 															-- and start.
 --]]
 --- ************************************************************************************************************************************************************************
 
--- TODO: convert level raw data to useable data
 

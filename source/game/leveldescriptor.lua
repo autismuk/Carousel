@@ -115,6 +115,7 @@ end
 
 function LevelDescriptor:get(levelNumber,skillMultiplier)
 	-- print("Obtaining",levelNumber,skillMultiplier)
+
 	skillMultiplier = skillMultiplier or 1 															-- default skill
 	assert(levelNumber ~= nil and self.m_rawData[levelNumber] ~= nil)								-- check exists
 	local descriptor = {}																			-- default empty descriptor.
@@ -153,8 +154,8 @@ function LevelDescriptor:get(levelNumber,skillMultiplier)
 
 
 	descriptor.wrappable = def.isWrapping 															-- boolean values
-	descriptor.collidable = def.isReversable 
-	descriptor.isReversable = def.isColliding
+	descriptor.collidable = def.isColliding
+	descriptor.reversable = def.isReversable
 
 	level.count = def.pieces 																		-- setup stuff.
 	level.segments = def.segments
@@ -188,46 +189,45 @@ end
 							 																		-- whereas these lines are a direct copy.
 LevelDescriptor.rawTextData = [===[
 Level,pieces,segments,isRotating,isMoving,isWrapping,alphaFunc,radiusFunc,isReversable,isColliding,velocity,rotation,baseTime,special,difficulty,actualTime
-1,2,3,,,,,,,,,,30,,150%,45
-2,4,3,,,,,,,,,,60,,100%,60
-3,6,3,,,,,,,,,,90,,100%,90
-4,4,2,y,,,,,,,,Slow,60,,120%,72
-5,6,3,y,,,,,,,,Slow,90,,100%,90
-6,8,3,y,,,,,,,,Slow,120,,100%,120
-7,8,4,y,,,,,,,,Slow,120,,120%,144
-8,8,4,y,,,,Gentle,,,,Medium,120,,120%,144
-9,4,3,,y,,,,,,Slow,,60,,120%,72
-10,6,3,,y,y,,,,,Slow,,90,,110%,99
-11,6,3,,y,y,,,,y,Slow,,90,,100%,90
-12,8,4,,y,,,,,,Slow,,120,,100%,120
-13,8,4,,y,y,,,y,y,Medium,,120,,110%,132
-14,8,4,,y,,Gentle,,y,,,,120,,100%,120
-15,10,4,,y, ,,,,,,,150,,100%,150
-16,10,4,,y,,Gentle,Gentle,y,,,,150,,100%,150
-17,6,3,y,y,,,,,y,Slow,Slow,90,,100%,90
-18,8,3,y,y,,,,,y,Slow,Slow,120,,100%,120
-19,10,4,y,y,,,,,y,Slow,Medium,150,,100%,150
-20,12,4,y,y,,,,,y,Medium,Medium,180,,100%,180
-21,12,5,y,y,,,,,y,Medium,Medium,180,,100%,180
-22,10,4,y,y,y,Gentle,Gentle,y,y,Medium,Medium,150,,100%,150
-23,12,4,y,y,,Medium,,,y,Medium,Medium,180,,100%,180
-24,12,4, ,y,,Medium,Medium,y,y,Fast, ,180,,100%,180
-25,12,4,y,y,,Medium,Medium,y,y,Fast,Slow,180,,100%,180
-26,14,6, ,y,,Medium,Medium,y,y,Fast, ,210,,100%,210
-27,14,6,y,y,,Medium,Medium,y,y,Fast,Slow,210,,100%,210
-28,12,8, ,y,y,Medium,Medium,y,y,Fast, ,180,,100%,180
-29,12,8,y,y,y,Medium,Medium,y,y,Fast,Slow,180,,100%,180
-30,12,8, ,y,y,Medium,Medium,y,y,Fast, ,180,,100%,180
-31,16,6,y,y,,Medium,Medium,y,y,Medium,Medium,240,,100%,240
-32,20,6,y,y,,Medium,Medium,y,y,Fast,Medium,300,,100%,300
-33,16,8,y,y,,Heavy,,y,y,Fast,Medium,240,,100%,240
-34,20,8,y,y,,,Heavy,y,y,Fast,Fast,300,,100%,300
-35,24,8,y,y,,Heavy,,y,y,Fast,Fast,360,,100%,360
-36,32,8,y,y,,,Heavy,y,y,Fast,Fast,480,,100%,480
+1,4,3,,,,,,,,,,32,,150%,48
+2,8,3,,,,,,,,,,64,,100%,64
+3,10,3,,,,,,,,,,80,,100%,80
+4,4,2,y,,,,,,,,Slow,32,,120%,38.4
+5,8,3,y,,,,,,,,Slow,64,,100%,64
+6,12,3,y,,,,,,,,Slow,96,,100%,96
+7,12,4,y,,,,,,,,Slow,96,,120%,115.2
+8,8,4,y,,,,Gentle,,,,Medium,64,,120%,76.8
+9,6,3,,y,,,,,,Slow,,48,,120%,57.6
+10,8,3,,y,y,,,,,Slow,,64,,110%,70.4
+11,10,3,,y,y,,,,y,Slow,,80,,100%,80
+12,12,4,,y,,,,,,Slow,,96,,100%,96
+13,12,4,,y,y,,, ,y,Medium,,96,,110%,105.6
+14,10,4,,y,,Gentle,Gentle,y,,,,80,,100%,80
+15,6,3,y,y,,,,,y,Slow,Slow,48,,100%,48
+16,10,3,y,y,,,,,y,Slow,Slow,80,,100%,80
+17,12,4,y,y,,,,,y,Slow,Medium,96,,100%,96
+18,10,5,y,y,,,,,y,Medium,Medium,80,,100%,80
+19,12,6,y,y,,,,,y,Medium,Medium,96,,100%,96
+20,10,4,y,y,y,Gentle,Gentle,y,y,Medium,Medium,80,,100%,80
+21,12,4,y,y,,Medium,,,y,Medium,Medium,96,,100%,96
+22,12,4, ,y,, ,Medium,y,y,Fast, ,96,,100%,96
+23,14,4,y,y,,Gentle,Medium,y,y,Fast,Slow,112,,100%,112
+24,14,6, ,y,,Medium,Gentle,y,y,Fast, ,112,,100%,112
+25,16,5,y,y,,Gentle,Medium,y,y,Fast,Slow,128,,100%,128
+26,18,3,y,y,,Medium,,y,y,Medium,Medium,144,,100%,144
+27,12,7, ,y,y, ,Gentle,y,y,Fast, ,96,,100%,96
+28,14,7,y,y,y,Medium,Medium,y,y,Fast,Slow,112,,100%,112
+29,14,8, ,y,y,Gentle, ,y,y,Fast, ,112,,100%,112
+30,16,6,y,y,, ,Medium,y,y,Medium,Medium,128,,100%,128
+31,20,6,y,y,,Medium,Medium,y,y,Fast,Medium,160,,100%,160
+32,16,8,y,y,,Heavy,,y,y,Fast,Medium,128,,100%,128
+33,20,8,y,y,,,Heavy,y,y,Fast,Fast,160,,110%,176
+34,24,8,y,y,,Heavy,,y,y,Fast,Fast,192,,120%,230.4
+35,28,8,y,y,,,Heavy,y,y,Fast,Fast,224,,120%,268.8
+36,32,8,y,y,,Heavy,Heavy,y,y,Fast,Fast,256,,130%,332.8
 ,,,,,,,,,,,,,,,
 ,Seconds/Segment,,,,,,,,,,,,,,
-,15,,,,,,,,,,,,,,
-
+,8,,,,,,,,,,,,,,
 ]===]
 
 

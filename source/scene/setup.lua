@@ -89,7 +89,8 @@ function SetupDisplay:tap(event)
 	for i = 1,#data.m_buttons do 													-- look for the tapped button
 		if data.m_buttons[i] == event.target then 									-- if it is found ...
 			local skill = Framework.fw.skillLevel:getSelected() 					-- get gui skill level
-			skill = (skill - 2) * 0.33 + 1 											-- make it 0.66,1,1.33
+			if skill == 2 then skill = 0.7 end 
+			if skill == 3 then skill = 1.3 end
 			local target = "skipAdvert"
 			self:performGameEvent(tracker:select("next","skipAdvert"), { level = i, skill = skill })
 			--print(i)
@@ -126,7 +127,7 @@ function SetupScene:preOpen(manager,data,resources)
 	scene:new("control.swipe.level",{})
 	scene:new("control.audio", { x = 17,r = 1,g = 1, b = 0 })											-- add an audio control
 	scene:new("control.selector.diamond",{})													-- and a page selector, these aren't moving with the swipe obviously.
-	scene:new("gui.text.list", { items = { "Easy","Moderate","Hard"}, x = 83,y = 92, tint = { 1,1,0}, key = "difficulty",
+	scene:new("gui.text.list", { items = { "Moderate","Easy","Hard"}, x = 83,y = 92, tint = { 1,1,0 }, key = "difficulty",
 								 font = { name = "jandles", size = display.contentWidth/8}}):name("skillLevel")
 	return scene 
 end
