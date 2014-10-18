@@ -78,7 +78,7 @@ manager:addManagedState("game",																	-- game scene
 						Framework:new("scene.game.manager",{}),
 						{ next = "level" })
 
-manager:start("title",{ }) 																		-- and start.
+manager:start("title",{ level = 1,skill = 1}) 													-- and start.
 
 --- ************************************************************************************************************************************************************************
 --[[
@@ -90,7 +90,6 @@ manager:start("title",{ }) 																		-- and start.
 --]]
 --- ************************************************************************************************************************************************************************
 
--- TODO: Cram first 12 into 7 or so and pad out.
 -- TODO: Penalty for wrong guess ?
 
 

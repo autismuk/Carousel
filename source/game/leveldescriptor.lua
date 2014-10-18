@@ -104,7 +104,7 @@ end
 
 function LevelDescriptor.gentleAlpha(time,identifier)
 	local sin = math.sin(math.rad((time*23+identifier * 45) % 180))														
-	local level = 1.7 - sin*1.7
+	local level = 2.5 - sin*2.5
 	return math.min(1,math.max(0,level))
 end 
 
@@ -172,6 +172,8 @@ function LevelDescriptor:get(levelNumber,skillMultiplier)
 	descriptor.rotation.min = descriptor.rotation.min * skillMultiplier
 	descriptor.rotation.max = descriptor.rotation.max * skillMultiplier
 
+
+	descriptor.radiusFunction = LevelDescriptor.heavyRadius
 	return level
 end 
 
