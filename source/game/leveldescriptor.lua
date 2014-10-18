@@ -122,8 +122,8 @@ function LevelDescriptor:get(levelNumber,skillMultiplier)
 	local level = {}																				-- and level (contains count, segments, time)
 	local def = self.m_rawData[levelNumber]															-- raw data
 
-	descriptor.rotation = { min = 0,max = 0, acc = 0 } 												-- initialise carousel descriptor.
-	descriptor.velocity = { min = 0,max = 0, collide = 0 }
+	descriptor.rotation = { min = 0,max = 0, acc = 0,collide = 0 } 									-- initialise carousel descriptor.
+	descriptor.velocity = { min = 0,max = 0, acc = 0,collide = 0 }
 	descriptor.wrappable = false
 	descriptor.collidable = false
 	descriptor.reversable = false
@@ -172,8 +172,6 @@ function LevelDescriptor:get(levelNumber,skillMultiplier)
 	descriptor.rotation.min = descriptor.rotation.min * skillMultiplier
 	descriptor.rotation.max = descriptor.rotation.max * skillMultiplier
 
-
-	descriptor.radiusFunction = LevelDescriptor.heavyRadius
 	return level
 end 
 
