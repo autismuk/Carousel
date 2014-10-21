@@ -35,12 +35,12 @@ function Carousel:constructor(info)
 	self:setRadius(self.m_descriptor.radius)										-- set the initial radius to the default value.
 	self:randomPosition() 															-- randomly position
 	self.m_group:addEventListener("tap",self) 										-- listen for taps.
-	self.m_velocity = self.m_descriptor.velocity.start or 
-									self:randomValue(self.m_descriptor.velocity.min,self.m_descriptor.velocity.max)
+	self.m_velocity = 
+				self:randomValue(self.m_descriptor.velocity.startMin,self.m_descriptor.velocity.startMax)
 	self.m_direction = math.random(360)												-- a randomly chosen direction initially.
 
-	self.m_rotationalVelocity = self.m_descriptor.rotation.start or 				-- randomly chosen rotational velocity
-									self:randomValue(self.m_descriptor.rotation.min,self.m_descriptor.rotation.max)
+	self.m_rotationalVelocity = 									 				-- randomly chosen rotational velocity
+				self:randomValue(self.m_descriptor.rotation.startMin,self.m_descriptor.rotation.startMax)
 	self.m_rotationalDirection = 1 													-- forward by default.
 	self:setRotation(math.random(360))												-- initial random rotation.
 
@@ -156,6 +156,7 @@ function Carousel:onEnterFrame(dt)
 		self.m_selector.alpha = math.abs(math.sin(self.m_time*2.5))					-- then flash it on and off
 	end 
 
+	local d,n = self.m_descriptor.velocity,self.m_velocity 
 	local v = self.m_descriptor.velocity 											-- access velocity structure.
 	if v.acc ~= 0 then 																-- is there acceleration supplied ?
 		self.m_velocity = self.m_velocity + v.acc * dt 								-- v = u + at 

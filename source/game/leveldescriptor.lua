@@ -117,13 +117,21 @@ function LevelDescriptor:get(levelNumber,skillMultiplier)
 	-- print("Obtaining",levelNumber,skillMultiplier)
 
 	skillMultiplier = skillMultiplier or 1 															-- default skill
-	assert(levelNumber ~= nil and self.m_rawData[levelNumber] ~= nil)								-- check exists
+	if levelNumber ~= 0 then 
+		assert(levelNumber ~= nil and self.m_rawData[levelNumber] ~= nil)							-- check exists (0 = debug only)
+	end 
 	local descriptor = {}																			-- default empty descriptor.
 	local level = {}																				-- and level (contains count, segments, time)
 	local def = self.m_rawData[levelNumber]															-- raw data
 
-	descriptor.rotation = { min = 0,max = 0, acc = 0,collide = 0 } 									-- initialise carousel descriptor.
-	descriptor.velocity = { min = 0,max = 0, acc = 0,collide = 0 }
+	if levelNumber == 0 then 
+		def = { rotation = {}, velocity = {}}
+		def.pieces = 2 def.segments = 8 def.actualTime = 30
+		def.velocity = "f" def.rotation = "f"
+	end
+
+	descriptor.rotation = { min = 0,max = 0, acc = 0,collide = 0, startMin = 0,startMax = 0 } 		-- initialise carousel descriptor.
+	descriptor.velocity = { min = 0,max = 0, acc = 0,collide = 0, startMin = 0,startMax = 0 }
 	descriptor.wrappable = false
 	descriptor.collidable = false
 	descriptor.reversable = false
@@ -172,7 +180,21 @@ function LevelDescriptor:get(levelNumber,skillMultiplier)
 	descriptor.rotation.min = descriptor.rotation.min * skillMultiplier
 	descriptor.rotation.max = descriptor.rotation.max * skillMultiplier
 
+	self:startProcess(descriptor.rotation,level.time) 												-- do acceleration through level
+	self:startProcess(descriptor.velocity,level.time)
+
 	return level
+end 
+
+--//	Given a reference with a min,max values calculate the start range and acceleration value
+--//	@def 	[table]		table with min,max,collide values
+--//	@time 	[number]	amount of time allocated for this level.
+
+function LevelDescriptor:startProcess(def,time)
+	if def.min == def.max then return end 															-- no variation between min and max.
+	def.startMin = def.min 																			-- initial start speeds possible range.
+	def.startMax = (def.max-def.min) * math.random()/2 + def.min 									-- somewhere random in the first 50%
+	def.acc = (def.max - def.startMax) / (time * 0.75) 												-- to full speed 75% of the way through.
 end 
 
 --//	Get the number of levels.

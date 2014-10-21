@@ -78,7 +78,7 @@ manager:addManagedState("game",																	-- game scene
 						Framework:new("scene.game.manager",{}),
 						{ next = "level" })
 
-manager:start("title",{ level = 1,skill = 1}) 													-- and start.
+manager:start("title",{ level = 0,skill = 1}) 													-- and start.
 
 --- ************************************************************************************************************************************************************************
 --[[
@@ -90,5 +90,5 @@ manager:start("title",{ level = 1,skill = 1}) 													-- and start.
 --]]
 --- ************************************************************************************************************************************************************************
 
--- Accelerate through level to highest speed.
+
 
