@@ -191,45 +191,56 @@ LevelDescriptor.rawTextData = [===[
 Level,pieces,segments,isRotating,isMoving,isWrapping,alphaFunc,radiusFunc,isReversable,isColliding,velocity,rotation,baseTime,special,difficulty,actualTime,,
 1,4,3,,,,,,,,,,32,,150%,48,,
 2,8,3,,,,,,,,,,64,,100%,64,,Easy start
-3,12,3,,,,,,,,,,96,,100%,96,,
-4,6,2,y,,,,,,,,Slow,48,,120%,57.6,,
-5,10,3,y,,,,,,,,Slow,80,,100%,80,,Just rotating
-6,14,3,y,,,,,,,,Slow,112,,100%,112,,
-7,10,4,y,,,,,,,,Medium,80,,100%,80,,
+3,12,4,,,,,,,,,,96,,100%,96,,
+4,6,3,y,,,,,,,,Slow,48,,120%,57.6,,
+5,10,4,y,,,,,,,,Slow,80,,100%,80,,Just rotating
+6,14,5,y,,,,,,,,Slow,112,,100%,112,,
+7,14,5,y,,,,,,,,Medium,112,,100%,112,,
 8,6,3,,y,,,,,,Slow,,48,,120%,57.6,,
-9,10,3,,y,y,,,,,Slow,,80,,110%,88,,
-10,12,3,,y,y,,,,y,Slow,,96,,100%,96,,Just Moving
-11,14,4,,y,,,,,,Slow,,112,,100%,112,,
-12,12,4,,y,y,,, ,y,Medium,,96,,110%,105.6,,
+9,10,4,,y,y,,,,,Slow,,80,,110%,88,,
+10,12,4,,y,y,,,,y,Slow,,96,,100%,96,,Just Moving
+11,14,5,,y,,,,,,Slow,,112,,100%,112,,
+12,12,6,,y,y,,, ,y,Medium,,96,,110%,105.6,,
 13,10,4,,y,,Gentle, ,y,,Slow,,80,,100%,80,,
-14,12,4,y, ,,,Gentle,,y, ,Slow,96,,100%,96,,
-15,12,3,y,y,,Gentle,Gentle,,y,Slow,Slow,96,,100%,96,,Gentle F/X
-16,12,4,y,y,,,Gentle,,y,Slow,Medium,96,,100%,96,,
-17,14,5,y,y,,Gentle,,,y,Medium,Medium,112,,100%,112,,
-18,12,6,y,y,,,Gentle,,y,Medium,Medium,96,,100%,96,,
-19,14,4,y,y,y,Gentle,Gentle,y,y,Medium,Medium,112,,100%,112,,
+14,12,5,y, ,,,Gentle,,y, ,Slow,96,,100%,96,,
+15,12,4,y,y,,Gentle,Gentle,,y,Slow,Slow,96,,100%,96,,Gentle F/X
+16,12,5,y,y,,,Gentle,,y,Slow,Medium,96,,100%,96,,
+17,14,6,y,y,,Gentle,,,y,Medium,Medium,112,,100%,112,,
+18,12,8,y,y,,,Gentle,,y,Medium,Medium,96,,100%,96,,
+19,14,5,y,y,y,Gentle,Gentle,y,y,Medium,Medium,112,,100%,112,,
 20,12,4,y,y,,Medium,,,y,Medium,Medium,96,,100%,96,,
-21,12,4, ,y,, ,Medium,y,y,Fast, ,96,,100%,96,,
-22,14,4,y,y,,Gentle,Medium,y,y,Fast,Slow,112,,100%,112,,
-23,14,6, ,y,,Medium,Gentle,y,y,Fast, ,112,,100%,112,,
+21,12,5, ,y,, ,Medium,y,y,Fast, ,96,,100%,96,,
+22,14,6,y,y,,Gentle,Medium,y,y,Fast,Slow,112,,100%,112,,
+23,14,7, ,y,,Medium,Gentle,y,y,Fast, ,112,,100%,112,,
 24,16,5,y,y,,Gentle,Medium,y,y,Fast,Slow,128,,100%,128,,Medium F/X
-25,18,3,y,y,,Medium,,y,y,Medium,Medium,144,,100%,144,,
+25,18,4,y,y,,Medium,,y,y,Medium,Medium,144,,100%,144,,
 26,14,7, ,y,y, ,Gentle,y,y,Fast, ,112,,100%,112,,
 27,18,7,y,y, ,Medium,Medium,y,y,Medium,Slow,144,,100%,144,,
 28,18,8, ,y,y,Gentle,Medium,y,y,Fast, ,144,,100%,144,,
 29,16,6,y,y,,Medium,Medium,y,y,Medium,Medium,128,,100%,128,,
-30,20,6,y,y,,Medium,Medium,y,y,Fast,Medium,160,,100%,160,,
-31,24,6,y,y,,,Heavy,y,y,Fast,Medium,192,,100%,192,,
-32,16,8,y,y,,Heavy,,y,y,Fast,Medium,128,,100%,128,,Heavy F/X
-33,20,8,y,y,,,Heavy,y,y,Fast,Fast,160,,110%,176,,
-34,24,8,y,y,,Heavy,,y,y,Fast,Fast,192,,120%,230.4,,
-35,28,8,y,y,,,Heavy,y,y,Fast,Fast,224,,120%,268.8,,
-36,32,8,y,y,,Heavy,Heavy,y,y,Fast,Fast,256,,130%,332.8,,
+30,18,6,y,y,,Medium,Medium,y,y,Fast,Medium,144,,100%,144,,
+31,20,6,y,y,,Medium,Medium,y,y,Fast,Medium,160,,100%,160,,
+32,22,6,y,y,,Medium,Medium,y,y,Fast,Medium,176,,100%,176,,
+33,24,6,y,y,,,Heavy,y,y,Fast,Medium,192,,100%,192,,
+34,16,8,y,y,,Heavy,,y,y,Fast,Medium,128,,100%,128,,Heavy F/X
+35,18,8,y,y,, ,Heavy,y,y,Fast,Fast,144,,110%,158.4,,
+36,20,8,y,y,,Heavy,,y,y,Fast,Fast,160,,110%,176,,
+37,22,8,y,y,, ,Heavy,y,y,Fast,Fast,176,,110%,193.6,,
+38,24,8,y,y,,Heavy,,y,y,Fast,Fast,192,,120%,230.4,,
+39,26,8,y,y,, ,Heavy,y,y,Fast,Fast,208,,110%,228.8,,
+40,28,8,y,y,,Heavy,,y,y,Fast,Fast,224,,120%,268.8,,
+41,30,8,y,y,, ,Heavy,y,y,Fast,Fast,240,,110%,264,,
+42,32,8,y,y,,Heavy,,y,y,Fast,Fast,256,,130%,332.8,,
+43,12,8,y,y,,Heavy,Heavy,y,y,Fast,Fast,96,,100%,96,,
+44,16,8,y,y,,Heavy,Heavy,y,y,Fast,Fast,128,,100%,128,,
+45,20,8,y,y,,Heavy,Heavy,y,y,Fast,Fast,160,,100%,160,,Let Rip !
+46,24,8,y,y,,Heavy,Heavy,y,y,Fast,Fast,192,,100%,192,,
+47,28,8,y,y,,Heavy,Heavy,y,y,Fast,Fast,224,,100%,224,,
+48,32,8,y,y,,Heavy,Heavy,y,y,Fast,Fast,256,,100%,256,,
 ,,,,,,,,,,,,,,,,,
 ,Seconds/Segment,,,,,,,,,,,,,,,,
 ,8,,,,,,,,,,,,,,,,
 ]===]
-
 --- ************************************************************************************************************************************************************************
 --[[
 

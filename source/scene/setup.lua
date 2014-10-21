@@ -54,7 +54,7 @@ function SetupDisplay:pageConstructor(group,data,info)
 		group:insert(data.m_buttons[n])												-- add to group
 	end 
 	data.m_headings = {}															-- create level headings.
-	local difficulty = { "Wimpish","Meh...","Insane" }
+	local difficulty = { "Wimpish","Meh...","Tough","Insane" }
 	for i = 1,math.floor((data.m_totalLevels+11)/12) do 
 		data.m_headings[i] = display.newBitmapText(group,difficulty[i] .. " levels",display.contentWidth * (i-0.5), display.contentHeight * 0.1,"jandles",display.contentWidth/4)
 		data.m_headings[i]:setTintColor(1,0.5,0)
@@ -124,8 +124,10 @@ local SetupScene = Framework:createClass("scene.setup","game.scenemanager")
 function SetupScene:preOpen(manager,data,resources)
 	local scene = Framework:new("game.scene")
 	--Framework:dump()
-	scene:new("control.swipe.level",{})
-	scene:new("control.audio", { x = 17,r = 1,g = 1, b = 0 })											-- add an audio control
+	local current = Framework.fw.levelManager:getCompletedLevel()								-- current level
+	local page = math.floor((current-1)/12)+1 													-- page actually on.
+	scene:new("control.swipe.level",{ default = page })											-- start a new page.
+	scene:new("control.audio", { x = 17,r = 1,g = 1, b = 0 })									-- add an audio control
 	scene:new("control.selector.diamond",{})													-- and a page selector, these aren't moving with the swipe obviously.
 	scene:new("gui.text.list", { items = { "Moderate","Easy","Hard"}, x = 83,y = 92, tint = { 1,1,0 }, key = "difficulty",
 								 font = { name = "jandles", size = display.contentWidth/8}}):name("skillLevel")
