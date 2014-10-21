@@ -269,6 +269,7 @@ Level,pieces,segments,isRotating,isMoving,isWrapping,alphaFunc,radiusFunc,isReve
 		Date 		Version 	Notes
 		---- 		------- 	-----
 		13-Oct-14	0.1 		Initial version of file
+		21-Oct-14 	1.0 		Release One
 
 --]]
 --- ************************************************************************************************************************************************************************
