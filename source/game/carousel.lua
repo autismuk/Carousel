@@ -304,8 +304,10 @@ function Carousel:applyDefaults()
 	d.rotation = d.rotation or {}
 	d = self.m_descriptor.velocity 													-- initialise the tables 
 	d.min = d.min or 0 d.max = d.max or 0 d.acc = d.acc or 0 d.collide = d.collide or 100
+	d.startMin = d.startMin or 0 d.startMax = d.startMax or 0
 	d = self.m_descriptor.rotation
 	d.min = d.min or 0 d.max = d.max or 0 d.acc = d.acc or 0 d.collide = d.collide or 100
+	d.startMin = d.startMin or 0 d.startMax = d.startMax or 0
 end 
 
 --//	Reliable version of math.random - works for any range of numbers, including non integers

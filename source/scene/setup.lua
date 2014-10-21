@@ -126,7 +126,7 @@ function SetupScene:preOpen(manager,data,resources)
 	--Framework:dump()
 	local current = Framework.fw.levelManager:getCompletedLevel()								-- current level
 	local page = math.floor((current-1)/12)+1 													-- page actually on.
-	scene:new("control.swipe.level",{ default = page })											-- start a new page.
+	scene:new("control.swipe.level",{ default = math.max(page,1) })								-- start a new page.
 	scene:new("control.audio", { x = 17,r = 1,g = 1, b = 0 })									-- add an audio control
 	scene:new("control.selector.diamond",{})													-- and a page selector, these aren't moving with the swipe obviously.
 	scene:new("gui.text.list", { items = { "Medium","Easy","Hard"}, x = 83,y = 92, tint = { 1,1,0 }, key = "difficulty",
